@@ -1,0 +1,71 @@
+﻿.header {
+    text-align: center;
+    height: 80px;
+    background: mediumseagreen;
+    color: #fff;
+    font-weight: bold;
+    line-height: 80px;
+
+    overflow: hidden;
+    padding:0 10px;
+}
+
+.footer {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+}
+
+.form-content {
+    padding: 5%;
+    border: 1px solid #ced4da;
+    margin-bottom: 2%;
+}
+
+.form-control {
+    border-radius: 1.5rem;
+}
+
+.btnSubmit {
+    margin-left: 35%;
+    border: none;
+    border-radius: 1.5rem;
+    padding: 1%;
+    width: 20%;
+    cursor: pointer;
+    background: #0062cc;
+    color: #fff;
+}
+
+.aParent {
+    padding: 3%;
+    float: left;
+    clear: none;
+}
+
+.CreateLink {
+    float: left;
+    width: 55%;
+    height: 5.5%;
+    background: green;
+}
+
+.deleteButton {
+    float: right;
+    width: 45%;
+}
+
+.navbar-nav > li {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.pContainer {
+    float: left;
+    margin-left:44%;
+}
+
+.btnContainer {
+    float: right;
+    margin-right:20px;
+}

@@ -1,0 +1,217 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>UserHome</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
+    @*//datetime picker*@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.js" integrity="sha256-2JRzNxMJiS0aHOJjG+liqsEOuBb6++9cY4dSOyiijX4=" crossorigin="anonymous"></script>
+
+    <link href="~/CSS/Home.css" rel="stylesheet" />
+    <link href="~/CSS/NavTabss.css" rel="stylesheet" />
+    <script src="~/Scripts/LoginReg.js"></script>
+    <link href="~/CSS/LoginReg.css" rel="stylesheet" />
+    <script src="~/Scripts/RegFormValidate.js"></script>
+
+    @*//calender*@
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+   
+    @*<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
+
+    <script>
+        $(document).ready(function () {
+
+            $('#btnSignInSignUp').click(function () {
+                //Open modal dialog forsignin/signup
+                $('#ModalSignInSignUp').modal();
+            })
+
+            $('#btnLogin').click(function () {                
+                var data = {
+                    UserName: $('#inputUsername').val(),
+                    Password: $('#inputPassword').val()                    
+                }
+                Login(data);
+            })
+
+            function Login(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/User/SignIn',
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                           // FetchEventAndRenderCalendar();
+                            $('#ModalSignInSignUp').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+            $('#btn-SignUp').click(function () {
+                var RegData = {
+                    UserName: $('#user-name').val(),
+                    Email: $('#user-email').val(),
+                    Password: $('#user-pass').val()
+                }
+                Register(RegData);
+            })
+
+            function Register(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/User/SignUp',
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                            // FetchEventAndRenderCalendar();
+                           $('#ModalSignInSignUp').modal();
+                        }
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+
+        })@*//document.ready*@
+    </script>
+
+</head>
+<body>
+    <div class="header">
+        <div class="pContainer">
+            <p>Event Reminder</p>
+        </div>
+        <div class="btnContainer">
+            <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 ">
+            <nav>
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
+                    <a class="nav-item nav-link" id="Create" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>
+                    <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">ListView</a>
+                    <a class="nav-item nav-link" id="nav-calenderView-tab" data-toggle="tab" href="#nav-calenderView" role="tab" aria-controls="nav-calenderView" aria-selected="false">CalenderView</a>
+                </div>
+            </nav>
+            <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                    Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
+                </div>
+                <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+
+                </div>
+                <div class="tab-pane fade" id="nav-listView" role="tabpanel" aria-labelledby="nav-listView-tab">
+                    Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
+                </div>
+                <div class="tab-pane fade" id="nav-calenderView" role="tabpanel" aria-labelledby="nav-calenderView-tab">
+                    Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    @*Login modal*@
+    <div class="modal" id="ModalSignInSignUp">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <div id="logreg-forms">
+                        <form class="form-signin">
+                            <h2> @ViewBag.Error</h2>
+                            <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
+                            <div class="social-login">
+                                <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
+                                <button class="btn google-btn social-btn" type="button"><span><i class="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
+                            </div>
+                            <p style="text-align:center"> OR  </p>
+                            <div class="input-group">
+                                <input type="text" id="inputUsername" class="form-control" name="UserName" placeholder="Username" required="" autofocus="">
+                            </div>
+                            <div class="input-group">
+                                <input type="password" id="inputPassword" class="form-control" name="Password" placeholder="Password" required="">
+                            </div>
+                            <div class="input-group">
+                                <button class="btn btn-md btn-rounded btn-block form-control submit" id="btnLogin" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+                            </div>
+
+                            <a href="#" id="forgot_pswd">Forgot password?</a>
+                            <hr>
+
+                            <!-- <p>Don't have an account!</p>  -->
+                            <button class="btn btn-primary btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
+
+                        </form>
+
+
+                        <form action="#" class="form-reset">
+                            <input type="email" id="resetEmail" class="form-control" placeholder="Email address" required="" autofocus="">
+                            <button class="btn btn-primary btn-block" type="submit">Reset Password</button>
+                            <a href="#" id="cancel_reset"><i class="fas fa-angle-left"></i> Back</a>
+                        </form>
+
+
+                        <form class="form-signup">
+                            <div class="social-login">
+                                <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign up with Facebook</span> </button>
+                            </div>
+                            <div class="social-login">
+                                <button class="btn google-btn social-btn" type="button"><span><i class="fab fa-google-plus-g"></i> Sign up with Google+</span> </button>
+                            </div>
+                            <p style="text-align:center">OR</p>
+                            <input type="text" id="user-name" class="form-control" placeholder="Username" name="UserName" required autofocus="">
+                            <input type="email" id="user-email" class="form-control" placeholder="Email address" name="Email" required autofocus="">
+                            <input type="password" id="user-pass" class="form-control" placeholder="Password" name="Password" required autofocus="">
+                            <input type="password" id="user-repeatpass" class="form-control" placeholder="Confirm Password" name="RePassword" required autofocus="">
+                            <div class="input-group">
+                                <button class="btn btn-md btn-block submit" id="btn-SignUp" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
+                            </div>
+                            <a href="#" id="cancel_signup"><i class="fa fa-angle-left"></i> Back</a>
+                        </form>
+
+                        <br>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @*end--Login modal*@
+
+    <div class="footer">
+        <p>Copyright &copy; 2020 Lekshmi Raj M R</p>
+    </div>
+
+</body>
+</html>
