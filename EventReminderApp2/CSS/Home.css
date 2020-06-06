@@ -19,45 +19,23 @@
 .form-content {
     padding: 5%;
     border: 1px solid #ced4da;
-    margin-bottom: 2%;
+    background:beige;
+    /*margin-bottom: 2%;*/
 }
 
 .form-control {
     border-radius: 1.5rem;
 }
 
-.btnSubmit {
-    margin-left: 35%;
+#btnSubmitCreate {
+    margin-left: 39%;
     border: none;
     border-radius: 1.5rem;
-    padding: 1%;
+    padding: .7%;
     width: 20%;
     cursor: pointer;
-    background: #0062cc;
+    background: #f34959;
     color: #fff;
-}
-
-.aParent {
-    padding: 3%;
-    float: left;
-    clear: none;
-}
-
-.CreateLink {
-    float: left;
-    width: 55%;
-    height: 5.5%;
-    background: green;
-}
-
-.deleteButton {
-    float: right;
-    width: 45%;
-}
-
-.navbar-nav > li {
-    margin-left: 50px;
-    margin-right: 50px;
 }
 
 .pContainer {

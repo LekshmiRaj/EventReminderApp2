@@ -39,29 +39,32 @@
     <script>
         $(document).ready(function () {
 
+            
+            ////login////
             $('#btnSignInSignUp').click(function () {
-                //Open modal dialog forsignin/signup
+                //Open modal dialog for signin/signup
                 $('#ModalSignInSignUp').modal();
             })
 
-            $('#btnLogin').click(function () {                
+            $('#btnLogin').click(function () {
                 var data = {
                     UserName: $('#inputUsername').val(),
-                    Password: $('#inputPassword').val()                    
+                    Password: $('#inputPassword').val()
                 }
                 Login(data);
-            })
+            });
 
-            function Login(data) {
+            function Login(loginData) {
                 $.ajax({
                     type: "POST",
                     url: '/User/SignIn',
-                    data: data,
+                    data: loginData,
                     success: function (data) {
                         if (data.status) {
                             //Refresh the calender
-                           // FetchEventAndRenderCalendar();
+                            FetchEventAndRenderCalendar();                            
                             $('#ModalSignInSignUp').modal('hide');
+
                         }
                     },
                     error: function () {
@@ -70,6 +73,9 @@
                 })
             }
 
+            
+
+            ///register///
             $('#btn-SignUp').click(function () {
                 var RegData = {
                     UserName: $('#user-name').val(),
@@ -98,7 +104,152 @@
             }
 
 
-        })@*//document.ready*@
+
+
+            ///calnder///
+            var events = [];
+            var selectedEvent = null;
+            //FetchEventAndRenderCalendar();
+            function FetchEventAndRenderCalendar() {
+                
+                events = [];
+                $.ajax({
+                    type: "GET",
+                    url: "/User/GetEvents",
+                    success: function (data) {
+                        $.each(data, function (i, v) {
+                            events.push({
+                                eventID: v.EventId,
+                                title: v.EventName,
+                                description: v.Description,
+                                start: moment(v.StartDate),
+                                end: v.EndDate != null ? moment(v.EndDate) : null
+                            });
+                        })
+
+                        GenerateCalender(events);
+                    },
+                    error: function (error) {
+                        alert('failed');
+                    }
+                })
+            }
+
+
+
+
+            function GenerateCalender(events) {
+                $('#calender').fullCalendar('destroy');
+                $('#calender').fullCalendar({
+                    contentHeight: 400,
+                    defaultDate: new Date(),
+                    timeFormat: 'h(:mm)a',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay,agenda'
+                    },
+                    eventLimit: true,
+                    eventColor: 'orange',
+                    events: events,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        selectedEvent = calEvent;
+                        $('#myModal #eventTitle').text(calEvent.title);
+                        var $description = $('<div/>');
+                        $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
+                        if (calEvent.end != null) {
+                            $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY HH:mm a")));
+                        }
+                        $description.append($('<p/>').html('<b>Description:</b>' + calEvent.description));
+                        $('#myModal #pDetails').empty().html($description);
+
+                        $('#myModal').modal();
+                    },
+                    selectable: true,
+                    select: function (start, end) {
+                        selectedEvent = {
+                            eventID: 0,
+                            title: '',
+                            description: '',
+                            start: start,
+                            end: end
+                        };
+                        openAddEditForm();
+                        $('#calendar').fullCalendar('unselect');
+                    },
+                    editable: true,
+                    eventDrop: function (event) {
+                        var data = {
+                            EventId: event.eventID,
+                            EventName: event.title,
+                            StartDate: event.start.format('YYYY/MM/DD HH:mm A'),
+                            EndDate: event.end != null ? event.end.format('YYYY/MM/DD HH:mm A') : null,
+                            Description: event.description
+                        };
+                        SaveEvent(data);
+                    }
+
+                })
+            }
+
+
+
+
+
+            ////create event////       
+            $('#btnSubmitCreate').click(function () {
+                //Validation/
+                if ($('#EventName').val().trim() == "") {
+                    alert('EventName is required');
+                    return;
+                }
+                if ($('#StartDate').val().trim() == "") {
+                    alert('Start date required');
+                    return;
+                }
+
+                else {
+                    var startDate = moment($('#StartDate').val(), "DD/MM/YYYY HH:mm A").toDate();
+                    var endDate = moment($('#EndDate').val(), "DD/MM/YYYY HH:mm A").toDate();
+                    if (startDate > endDate) {
+                        alert('Invalid end date');
+                        return;
+                    }
+                }
+                var data = {
+                    EventId: $('#EventID').val(),
+                    EventName: $('#EventName').val().trim(),
+                    Description: $('#Description').val(),
+                    StartDate: $('#StartDate').val().trim(),
+                    EndDate: $('#EndDate').val().trim()
+                }
+                SaveEvent(data);
+            })
+
+
+
+            function SaveEvent(data) {
+                $.ajax({
+                    type: "POST",
+                    url: '/Account/SaveEvent',
+                    data: data,
+                    success: function (data) {
+                        if (data.status) {
+                            //Refresh the calender
+                            FetchEventAndRenderCalendar();
+                            $('#myModalSave').modal('hide');
+                        }
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                })
+            }
+
+
+
+        })@*//document.ready*@        
+
     </script>
 
 </head>
@@ -112,7 +263,7 @@
         </div>
     </div>
 
-    <div class="row">
+    @*<div class="row">*@
         <div class="col-xs-12 ">
             <nav>
                 <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
@@ -123,22 +274,162 @@
                 </div>
             </nav>
             <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                     Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
                 </div>
-                <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
 
-                </div>
+
+
+                @*create*@
+                <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+                    <div class="container register-form">
+
+                        <form name="studentForm" method=post>
+                            <div class="form-content">
+
+                                @*<input type="hidden" class="form-control" name="UserId" />
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label></label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="hidden" class="form-control" name="EventId" />
+                                    </div>
+                                </div>*@
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>Event Name:</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" placeholder="Event Name" name="EventName" id="EventName" required />
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>Description:</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" cols="40" rows="5" placeholder="Description " name="Description" ></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>Start Date:</label>
+                                    </div>
+
+                                    <div class="col-md-9">
+                                        <input type="date" class="form-control" placeholder="YYYY-MM-DD" name="StartDate" id="StartDate" required />
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>End Date:</label>
+                                    </div>
+
+                                    <div class="col-md-9">
+                                        <input type="date" class="form-control" placeholder="YYYY-MM-DD" name="EndDate" id="EndDate" required />
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btnSubmit" id="btnSubmitCreate">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>@*create--end*@
+
                 <div class="tab-pane fade" id="nav-listView" role="tabpanel" aria-labelledby="nav-listView-tab">
                     Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
                 </div>
+
+
+                @*calenderView*@
                 <div class="tab-pane fade" id="nav-calenderView" role="tabpanel" aria-labelledby="nav-calenderView-tab">
-                    Et et consectetur ipsum labore excepteur est proident excepteur ad velit occaecat qui minim occaecat veniam. Fugiat veniam incididunt anim aliqua enim pariatur veniam sunt est aute sit dolor anim. Velit non irure adipisicing aliqua ullamco irure incididunt irure non esse consectetur nostrud minim non minim occaecat. Amet duis do nisi duis veniam non est eiusmod tempor incididunt tempor dolor ipsum in qui sit. Exercitation mollit sit culpa nisi culpa non adipisicing reprehenderit do dolore. Duis reprehenderit occaecat anim ullamco ad duis occaecat ex.
-                </div>
+                    <div id="calender"></div>
+
+                    <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <button id="btnDelete" class="btn btn-default btn-sm pull-right">
+                                        <span class="glyphicon glyphicon-remove"></span> Remove
+                                    </button>
+                                    <button id="btnEdit" class="btn btn-default btn-sm pull-right" style="margin-right:5px;">
+                                        <span class="glyphicon glyphicon-pencil"></span> Edit
+                                    </button>
+
+                                    <p id="pDetails"></p>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    @*////calender click/////*@
+
+                    @*/update calender/*@
+
+                    <div class="modal" id="myModalSave">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Save Event</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form class="col-md-12 form-horizontal">
+                                        <input type="hidden" id="hdEventID" value="0" />
+                                        <div class="form-group">
+                                            <label>Subject</label>
+                                            <input type="text" id="txtSubject" class="form-control" />
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label>Start</label>
+                                            <input type="text" id="txtStart" class="form-control" />
+                                        </div>
+
+                                        <div class="form-group" id="divEndDate">
+                                            <label>End</label>
+                                            <input type="text" id="txtEnd" class="form-control" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                                        </div>
+
+                                        <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>@*calenderView--end*@
+
+
             </div>
 
         </div>
-    </div>
+    @*</div>*@
 
 
     @*Login modal*@
@@ -148,8 +439,7 @@
 
                 <div class="modal-body">
                     <div id="logreg-forms">
-                        <form class="form-signin">
-                            <h2> @ViewBag.Error</h2>
+                        <form class="form-signin">                            
                             <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
                             <div class="social-login">
                                 <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
@@ -163,7 +453,7 @@
                                 <input type="password" id="inputPassword" class="form-control" name="Password" placeholder="Password" required="">
                             </div>
                             <div class="input-group">
-                                <button class="btn btn-md btn-rounded btn-block form-control submit" id="btnLogin" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
+                                <button class="btn btn-md btn-rounded btn-block form-control submit" id="btnLogin" type="button"><i class="fas fa-sign-in-alt"></i> Sign in</button>
                             </div>
 
                             <a href="#" id="forgot_pswd">Forgot password?</a>
