@@ -13,5 +13,7 @@ namespace EventReminderApp2.Models
         public string Description { get; set; }       
         public DateTime StartDate { get; set; }        
         public DateTime EndDate { get; set; }
+        public string StartDateStr { get { return StartDate.ToString(); } }
+        public string EndDateStr { get { return EndDate.ToString(); } }
     }
 }

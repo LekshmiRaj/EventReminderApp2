@@ -81,29 +81,10 @@ namespace EventReminderApp2.Controllers
 
         [HttpPost]
         public JsonResult SaveEvent(EventModel eventModel)
-        {
-            //var status = false;
+        {           
             string userid = Session["userid"].ToString();
-            eventRepository.AddEditEvent(eventModel, userid);
-
-
-            //using (MyDatabaseEntities dc = new MyDatabaseEntities())
-            //{
-            //    if (e.EventID > 0)
-            //    {
-            //        Update the event
-            //        var v = dc.Events.Where(a => a.EventID == e.EventID).FirstOrDefault();
-            //        if (v != null)
-            //        {
-            //            v.Subject = e.Subject;
-            //            v.Start = e.Start;
-            //            v.End = e.End;
-            //            v.Description = e.Description;
-            //        }
-            //    }
-
-            var status = true;
-            //}
+            eventRepository.AddEditEvent(eventModel, userid);            
+            var status = true;            
             return new JsonResult { Data = new { status = status } };
         }
 
@@ -118,6 +99,18 @@ namespace EventReminderApp2.Controllers
             List<EventModel> eventList = eventRepository.ListEvents(userid);
 
             return new JsonResult { Data = eventList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        [HttpPost]
+        public JsonResult DeleteEvent(int eventID)
+        {
+            var status = false;
+            var d = eventRepository.DeleteEvent(eventID);
+            if (d != 0)
+            {
+                status = true;
+            }
+            return new JsonResult { Data = new { status = status } };
         }
 
 

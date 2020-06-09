@@ -202,6 +202,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="CSS\calenderIMG.jpg" />
     <Content Include="CSS\Home.css" />
     <Content Include="CSS\LoginReg.css" />
     <Content Include="CSS\NavTabss.css" />
@@ -224,6 +225,7 @@
     <Content Include="Scripts\LoginReg.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\RegFormValidate.js" />
+    <Content Include="Scripts\UserHome.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
