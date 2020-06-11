@@ -38,9 +38,8 @@
 
     @*<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
 
-    <script>
-       
-    </script>
+    @*//google api*@    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 </head>
 <body>
@@ -51,6 +50,7 @@
         <div class="btnContainer">
             <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
             <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">SignOut</button>
+            @*<a href="/User/ClearSessions">Logout</a>*@
         </div>
     </div>
     
@@ -67,12 +67,13 @@
                     <a class="nav-item nav-link" id="Create" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>
                     <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">ListView</a>
                     <a class="nav-item nav-link" id="nav-calenderView-tab" data-toggle="tab" href="#nav-calenderView" role="tab" aria-controls="nav-calenderView" aria-selected="false">CalenderView</a>
-                    <a class="nav-item nav-link" id="Views-tab" data-toggle="dropdown" href="#nav-Views" role="tab" aria-controls="nav-Views" aria-selected="false">Views</a>
-
-                    
-                    <div class="dropdown-menu dropdown-menu-center">
-                        <a class="dropdown-item" href="#tab1" data-toggle="tab">Calender tab</a>
-                        <a class="dropdown-item" href="#tab2" data-toggle="tab">List tab</a>                        
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="tab" aria-controls="nav-calenderView" aria-selected="false">Messages</a>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item">Inbox</a>
+                            <a href="#" class="dropdown-item">Sent</a>
+                            <a href="#" class="dropdown-item">Drafts</a>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -87,7 +88,7 @@
                 <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
 
                     <div class="container register-form" id="createForm">
-                        <form name="studentForm" method=post>
+                        <form name="CreateForm" method=post>
                             <div class="form-content">
 
                                 <input type="hidden" class="form-control" name="UserId" id="UserId" />
@@ -256,11 +257,11 @@
                             <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
                             <div class="social-login">
                                 <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
-                                <button class="btn google-btn social-btn" type="button"><span><i class="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
+                                <button class="btn google-btn social-btn" id="btnGoogleLogin" type="button"><span><i class="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
                             </div>
                             <p style="text-align:center"> OR  </p>
                             <div class="input-group">
-                                <input type="text" id="inputUsername" class="form-control" name="UserName" placeholder="Username" required="" autofocus="">
+                                <input type="text" id="inputEmail" class="form-control" name="Email" placeholder="Email id" required="" autofocus="">
                             </div>
                             <div class="input-group">
                                 <input type="password" id="inputPassword" class="form-control" name="Password" placeholder="Password" required="">

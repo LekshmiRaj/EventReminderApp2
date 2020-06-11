@@ -58,11 +58,11 @@ namespace EventReminderApp2
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "718508958029-49a98067qtqp248e6h0fv752tg4u076d.apps.googleusercontent.com",
+                ClientSecret = "m7nLVaZwOv2yeGcX5R6-5Uyg"
+            });
         }
     }
 }

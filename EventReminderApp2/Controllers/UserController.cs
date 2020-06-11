@@ -22,6 +22,10 @@ namespace EventReminderApp2.Controllers
 
         public ActionResult UserHome()
         {
+            if (Session["userid"] != null)
+            {
+                
+            }
             return View();
         }
 
@@ -51,7 +55,7 @@ namespace EventReminderApp2.Controllers
             using (SqlConnection con = new SqlConnection(ConnectionString))
             {
                 con.Open();
-                string query = $"Select UserId,UserName,Password from [dbo].[tblRegistration] where UserName='{login.UserName}' and Password='{login.Password}'";
+                string query = $"Select UserId,Email,Password from [dbo].[tblRegistration] where Email='{login.Email}' and Password='{login.Password}'";
                 SqlCommand cmd = new SqlCommand(query, con);
                 cmd.CommandType = CommandType.Text;                
 
@@ -64,7 +68,7 @@ namespace EventReminderApp2.Controllers
                     login.UserId = Convert.ToInt32(row["Userid"]);
                     string uid = row["Userid"].ToString();
                     Session["userid"] = uid;
-                    Session["username"] = login.UserName;
+                    Session["Email"] = login.Email;
                     var status = true;
                     con.Close();
                     return new JsonResult { Data = new { status = status } };
@@ -112,8 +116,49 @@ namespace EventReminderApp2.Controllers
             }
             return new JsonResult { Data = new { status = status } };
         }
+        
+        public ActionResult ClearSessions()
+        {
+            Session.Clear();                        
+            return RedirectToAction("UserHome");
+        }
 
+        [HttpPost]
+        public JsonResult GoogleLogin(string email, string name, string gender, string lastname, string location)
+        {
+            var status = false;
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                string qry;               
+                con.Open();
+                string query = $"Select UserId,Email from [dbo].[tblRegistration] where Email='{email}' ";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.CommandType = CommandType.Text;
 
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                DataTable datatable = new DataTable();
+                sda.Fill(datatable);
+                if (datatable.Rows.Count == 1)
+                {
+                    DataRow row = datatable.Rows[0];                   
+                    string uid = row["UserId"].ToString();
+                    string mail = row["Email"].ToString();
+                    Session["userid"] = uid;
+                    Session["email"] = mail;
+
+                    status = true;
+                }
+                else
+                {
+                    qry = "insert into tblRegistration(UserName,Email)" +
+                    " values('" + name + "','" + email + "')";
+                    eventRepository.AddUpdateDeleteSQL(qry);
+                    status = true;
+                }
+            }
+            return new JsonResult { Data = new { status = status } };
+
+        }
 
     }
 }

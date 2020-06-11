@@ -69,9 +69,6 @@ namespace EventReminderApp2
 
                 //StartDate = Convert.ToDateTime(start.ToString("yyyy-MM-dd")),
                 //EndDate = Convert.ToDateTime(end.ToString("yyyy-MM-dd")),
-
-
-
             };
         }
 

@@ -1,4 +1,22 @@
 ﻿$(document).ready(function () {
+
+    // for google authentication
+    var OAUTHURL = 'https://accounts.google.com/o/oauth2/auth?';
+    var VALIDURL = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
+    var SCOPE = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+    var CLIENTID = '718508958029-49a98067qtqp248e6h0fv752tg4u076d.apps.googleusercontent.com';
+    var REDIRECT = 'http://localhost:60256/User/UserHome';
+    var LOGOUT = 'http://localhost:60256/User/UserHome';
+    var TYPE = 'token';
+    var _url = OAUTHURL + 'scope=' + SCOPE + '&client_id=' + CLIENTID + '&redirect_uri=' + REDIRECT + '&response_type=' + TYPE;
+    var acToken;
+    var tokenType;
+    var expiresIn;
+    var user;
+    var loggedIn = false;
+    ////////
+
+    
     $('#backgroundImg').css('display', 'block');
     $('#tab').css('display', 'none');
 
@@ -10,7 +28,7 @@
 
     $('#btnLogin').click(function () {
         var data = {
-            UserName: $('#inputUsername').val(),
+            Email: $('#inputEmail').val(),
             Password: $('#inputPassword').val()
         }
         Login(data);
@@ -41,7 +59,6 @@
     }
 
 
-
     ///register///
     $('#btn-SignUp').click(function () {
         var RegData = {
@@ -69,7 +86,6 @@
             }
         })
     }
-
 
 
     ///calnder///
@@ -184,6 +200,12 @@
             StartDate: $('#StartDate').val().trim(),
             EndDate: $('#EndDate').val().trim()
         }
+        //clearing form values
+        $('#EventID').val("");
+        $('#EventName').val("");
+        $('#Description').val("");
+        $('#StartDate').val("");
+        $('#EndDate').val("");
         CreateEvent(data);
     })
 
@@ -193,7 +215,7 @@
             url: '/User/SaveEvent',
             data: data,
             success: function (data) {
-                if (data.status) {
+                if (data.status) {                           
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
                 }
@@ -323,15 +345,120 @@
 
 
     //signOut
-    $('#btnSignOut').click(function () {
-        //Session["userid"] = null;
-        //Session["username"] = null;
+    $('#btnSignOut').click(function () {       
+        ClearSession();
         $('#backgroundImg').css('display', 'block');
         $('#tab').css('display', 'none');
         $(btnSignOut).css('display', 'none');
         $(btnSignInSignUp).css('display', 'inline-block');
+        $('#inputEmail').val("");  
+        $('#inputPassword').val(""); 
     });
 
+    function ClearSession() {
+        $.ajax({
+            type: "GET",
+            url: "/User/ClearSessions",
+            success: function (data) {                                
+            },
+            error: function (error) {
+                alert('failed');
+            }
+        });
+    }
+
+
+
+    //google authentication
+    $('#btnGoogleLogin').click(function () {
+        login();
+    });
+
+    function login() {
+        var win = window.open(_url, "windowname1", 'width=800, height=600');
+        var pollTimer = window.setInterval(function () {
+            try {
+                console.log(win.document.URL);
+                if (win.document.URL.indexOf(REDIRECT) != -1) {
+                    window.clearInterval(pollTimer);
+                    var url = win.document.URL;
+                    acToken = gup(url, 'access_token');
+                    tokenType = gup(url, 'token_type');
+                    expiresIn = gup(url, 'expires_in');
+
+                    win.close();
+                    debugger;
+                    validateToken(acToken);
+                }
+            }
+            catch (e) {
+
+            }
+        }, 500);
+    }
+
+
+    function gup(url, name) {
+        namename = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\#&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(url);
+        if (results == null)
+            return "";
+        else
+            return results[1];
+    }
+
+    function validateToken(token) {
+        getUserInfo();
+        $.ajax(
+            {
+                url: VALIDURL + token,
+                data: null,
+                success: function (responseText) {
+                },
+            });
+    }
+
+
+    function getUserInfo() {
+        $.ajax({
+            url: 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' + acToken,
+            data: null,
+            success: function (resp) {
+                user = resp;
+                getAccountDetails(user);
+                console.log(user);
+            }
+        });            
+    }
+
+
+    function getAccountDetails(user) {
+        $.ajax({
+            url: '/User/GoogleLogin',
+            type: 'POST',
+            data: {
+                email: user.email,
+                name: user.name,
+                gender: user.gender,
+                lastname: user.lastname,
+                location: user.location
+            },
+            success: function (data) {
+               // window.location.href = "/User/UserHome/";
+                $('#backgroundImg').css('display', 'none');
+                $('#tab').css('display', 'block');
+                $(btnSignInSignUp).css('display', 'none');
+                $(btnSignOut).css('display', 'inline-block');                
+                FetchEventAndRenderCalendar();
+                showList();
+                $('#ModalSignInSignUp').modal('hide');
+            },           
+        });
+    }
 
 
 })//document.ready       
+
+
