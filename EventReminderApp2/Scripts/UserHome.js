@@ -189,9 +189,7 @@
                 return;
             }
         }
-        //var sd = new Date($('#StartDate').val());
-        //var ed = new Date($('#EndDate').val());
-       
+              
         var data = {
             EventId: $('#EventID').val(),
             EventName: $('#EventName').val().trim(),
@@ -247,7 +245,6 @@
         })
     }
 
-
     //delete in popup
     $('#btnDelete').click(function () {
         if (selectedEvent != null && confirm('Are you sure?')) {
@@ -270,11 +267,10 @@
     })
 
 
-
     $('#btnEdit').click(function () {
         //Open modal dialog for edit event
         openAddEditForm();
-    })
+    });
 
     function openAddEditForm() {
         if (selectedEvent != null) {
@@ -317,7 +313,7 @@
             EndDate: $('#txtEnd').val()
         }
         SaveEvent(data);
-    })
+    });
   
 
     function showList() {
@@ -337,7 +333,37 @@
                         + "<td>" + "<button class='deleteRow'" + ">Delete</button>" + "</td>"
                         + "</tr>";
                     $('#tblEventList tbody').append(rows);
-                });                
+                }); 
+
+                $('#tblEventList tbody .EditRow').click(function () {
+                    var id = $(this).closest('tr').attr("id");
+                   // alert('edit');
+                    // Event list update popup
+                  //  $('ModalListUpdate').modal();
+                    
+                });
+
+                $("#tblEventList tbody .deleteRow").click(function () {                    
+                    var eventId = $(this).closest('tr').attr("id");
+                    var confirmDelete = confirm('are you sure you want to delete this?');
+                    if (confirmDelete == true) {
+                        $.ajax(
+                            {
+                                type: "POST",
+                                url: "User/DeleteEvent",
+                                data: { 'eventID': eventId },
+                                success: function (result) {
+                                    $("#" + eventId).remove();
+                                },
+                                error: function (a, b, c) {
+                                    alert(c);
+                                }
+                            });
+
+                    } else {
+                        return false;
+                    }
+                });
             },
             error: function (error) {
                 alert('failed');
@@ -345,29 +371,7 @@
         });
     }
 
-    $(".deleteRow").click(function () {
-        alert("deleted");
-        //var eventId = this.id;
-        //var confirmDelete = confirm('are you sure you want to delete this?');
-        //if (confirmDelete == true) {            
-        //    $.ajax(
-        //        {
-        //            type: "POST",
-        //            url: "User/DeleteEvent",
-        //            data: { 'eventID': eventId },                                        
-        //            success: function (result) {
-        //                $("#" + eventId).remove();                                                
-        //            },
-        //            error: function (a, b, c) {
-        //                alert(c);
-        //            }
-        //        });
-
-        //} else {
-        //    return false;
-        //}
-    });
-
+          
     //signOut
     $('#btnSignOut').click(function () {       
         ClearSession();
@@ -390,8 +394,7 @@
             }
         });
     }
-
-
+   
 
     //google authentication
     $('#btnGoogleLogin').click(function () {
