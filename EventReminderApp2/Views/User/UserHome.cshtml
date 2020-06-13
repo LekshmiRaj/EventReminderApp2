@@ -53,196 +53,181 @@
             @*<a href="/User/ClearSessions">Logout</a>*@
         </div>
     </div>
-    
+
     @*background*@
     <div id="backgroundImg">
-        <img src="~/CSS/calenderIMG.jpg" alt="calender" class="img-fluid"/>
+        <img src="~/CSS/calenderIMG.jpg" alt="calender" class="img-fluid" />
     </div>
 
     @*<div class="row">*@
-        <div class="col-xs-12 " id="tab">
-            <nav>
-                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
-                    <a class="nav-item nav-link" id="Create" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>
-                    <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">ListView</a>
-                    <a class="nav-item nav-link" id="nav-calenderView-tab" data-toggle="tab" href="#nav-calenderView" role="tab" aria-controls="nav-calenderView" aria-selected="false">CalenderView</a>
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="tab" aria-controls="nav-calenderView" aria-selected="false">Messages</a>
-                        <div class="dropdown-menu">
-                            <a href="#" class="dropdown-item">Inbox</a>
-                            <a href="#" class="dropdown-item">Sent</a>
-                            <a href="#" class="dropdown-item">Drafts</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-            <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-
-                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                    
-                </div>
-
-                               
-                @*create*@
-                <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
-
-                    <div class="container register-form" id="createForm">
-                        <form name="CreateForm" method=post>
-                            <div class="form-content">
-
-                                <input type="hidden" class="form-control" name="UserId" id="UserId" />
-                                <input type="hidden" class="form-control" name="EventId" id="EventId" />
-
-                                <div class="row form-group">
-                                    <div class="col-md-3">
-                                        <label>Event Name:</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="Event Name" name="EventName" id="EventName" required />
-                                    </div>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="col-md-3">
-                                        <label>Description:</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <textarea class="form-control" cols="40" rows="5" placeholder="Description" name="Description" id="Description"></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="col-md-3">
-                                        <label>Start Date:</label>
-                                    </div>
-
-                                    <div class="col-md-9">
-                                        <input type="date" class="form-control" placeholder="YYYY-MM-DD" name="StartDate" id="StartDate" required />
-                                    </div>
-                                </div>
-
-                                <div class="row form-group">
-                                    <div class="col-md-3">
-                                        <label>End Date:</label>
-                                    </div>
-
-                                    <div class="col-md-9">
-                                        <input type="date" class="form-control" placeholder="YYYY-MM-DD" name="EndDate" id="EndDate" required />
-                                    </div>
-                                </div>
-
-                                <button type="button" class="btnSubmit" id="btnSubmitCreate">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>@*create--end*@
-
-
-                @*listView*@
-                <div class="tab-pane fade" id="nav-listView" role="tabpanel" aria-labelledby="nav-listView-tab">
-                    <div class="container" id="eventLists">
-
-                        <table class="table" id="tblEventList">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th> EventId</th>
-                                    <th>EventName</th>
-                                    <th>Description</th>
-                                    <th>StartDate</th>
-                                    <th>EndDate</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div> @*listView--end*@
-
-
-                @*calenderView*@
-                <div class="tab-pane fade" id="nav-calenderView" role="tabpanel" aria-labelledby="nav-calenderView-tab">
-                    <div id="calender"></div>
-
-                    <div class="modal" id="myModal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <h4 class="modal-title"><span id="eventTitle"></span></h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <div class="modal-body">
-                                    <button type="button" id="btnDelete" class="btn btn-info btn-sm float-right">
-                                        <span class="glyphicon glyphicon-remove"></span> Remove
-                                    </button>
-                                    <button id="btnEdit" class="btn btn-info btn-sm float-right" style="margin-right:5px;">
-                                        <span class="glyphicon glyphicon-pencil"></span> Edit
-                                    </button>
-
-                                    <p id="pDetails"></p>
-                                </div>
-
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    @*////calender click/////*@
-
-                    @*/update calender/*@
-
-                    <div class="modal" id="myModalSave">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Save Event</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-
-                                <div class="modal-body">
-                                    <form class="col-md-12 form-horizontal">
-                                        <input type="hidden" id="hdEventID" value="0" />
-                                        <div class="form-group">
-                                            <label>Subject</label>
-                                            <input type="text" id="txtSubject" class="form-control" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Start</label>
-                                            <input type="text" id="txtStart" class="form-control" />
-                                        </div>
-
-                                        <div class="form-group" id="divEndDate">
-                                            <label>End</label>
-                                            <input type="text" id="txtEnd" class="form-control" />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Description</label>
-                                            <textarea id="txtDescription" rows="3" class="form-control"></textarea>
-                                        </div>
-
-                                        <button type="button" id="btnSave" class="btn btn-success">Save</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>@*calenderView--end*@
-
-
+    <div class="col-xs-12 " id="tab">
+        <nav>
+            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
+                <a class="nav-item nav-link" id="nav-Create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>
+                <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">ListView</a>
+                @*<a class="nav-item nav-link" id="nav-calenderView-tab" data-toggle="tab" href="#nav-calenderView" role="tab" aria-controls="nav-calenderView" aria-selected="false">CalenderView</a>*@
             </div>
+        </nav>
+        <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+            @*Home*@
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                <div id="calender"></div>
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title"><span id="eventTitle"></span></h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <div class="modal-body">
+                                <button type="button" id="btnDelete" class="btn btn-info btn-sm float-right">
+                                    <span class="glyphicon glyphicon-remove"></span> Remove
+                                </button>
+                                <button id="btnEdit" class="btn btn-info btn-sm float-right" style="margin-right:5px;">
+                                    <span class="glyphicon glyphicon-pencil"></span> Edit
+                                </button>
+
+                                <p id="pDetails"></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                @*////calender click/////*@
+                @*/update calender/*@
+
+                <div class="modal" id="myModalSave">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <h4 class="modal-title">Save Event</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+
+                            <div class="modal-body">
+                                <form class="col-md-12 form-horizontal">
+                                    <input type="hidden" id="hdEventID" value="0" />
+                                    <div class="form-group">
+                                        <label>Subject</label>
+                                        <input type="text" id="txtSubject" class="form-control" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Start</label>
+                                        <input type="text" id="txtStart" class="form-control" />
+                                    </div>
+
+                                    <div class="form-group" id="divEndDate">
+                                        <label>End</label>
+                                        <input type="text" id="txtEnd" class="form-control" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea id="txtDescription" rows="3" class="form-control"></textarea>
+                                    </div>
+
+                                    <button type="button" id="btnSave" class="btn btn-success">Save</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>@*home--end*@
+
+
+            @*create*@
+            <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+
+                <div class="container register-form" id="createForm">
+                    <form name="CreateForm" method=post>
+                        <div class="form-content">
+
+                            <input type="hidden" class="form-control" name="UserId" id="UserId" />
+                            <input type="hidden" class="form-control" name="EventId" id="EventId" />
+
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label>Event Name:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" placeholder="Event Name" name="EventName" id="EventName" required />
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label>Description:</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <textarea class="form-control" cols="40" rows="5" placeholder="Description" name="Description" id="Description"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label>Start Date:</label>
+                                </div>
+
+                                <div class="col-md-9">
+                                    <input type="datetime-local" class="form-control" placeholder="MM-DD-YYYY" name="StartDate" id="StartDate" required />
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+                                <div class="col-md-3">
+                                    <label>End Date:</label>
+                                </div>
+
+                                <div class="col-md-9">
+                                    <input type="datetime-local" class="form-control" placeholder="MM-DD-YYYY" name="EndDate" id="EndDate" required />
+                                </div>
+                            </div>
+
+                            <button type="button" class="btnSubmit" id="btnSubmitCreate">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>@*create--end*@
+
+
+            @*listView*@
+            <div class="tab-pane fade" id="nav-listView" role="tabpanel" aria-labelledby="nav-listView-tab">
+                <div class="container" id="eventLists">
+
+                    <table class="table" id="tblEventList">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th> EventId</th>
+                                <th>EventName</th>
+                                <th>Description</th>
+                                <th>StartDate</th>
+                                <th>EndDate</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div> @*listView--end*@
 
         </div>
+
+    </div>
     @*</div>*@
 
 
@@ -253,10 +238,10 @@
 
                 <div class="modal-body">
                     <div id="logreg-forms">
-                        <form class="form-signin">                            
+                        <form class="form-signin">
                             <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
                             <div class="social-login">
-                                <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
+                                <button class="btn facebook-btn social-btn" id="btnFacebookLogin" type="button"><span><i class="fab fa-facebook-f"></i> Sign in with Facebook</span> </button>
                                 <button class="btn google-btn social-btn" id="btnGoogleLogin" type="button"><span><i class="fab fa-google-plus-g"></i> Sign in with Google+</span> </button>
                             </div>
                             <p style="text-align:center"> OR  </p>
@@ -312,6 +297,21 @@
         </div>
     </div>
     @*end--Login modal*@
+
+
+    @*List Update modal*@
+    <div class="modal" id="ModalListUpdate">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-body">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @*List update modal --end*@
 
     <div class="footer">
         <p>Copyright &copy; 2020 Lekshmi Raj M R</p>

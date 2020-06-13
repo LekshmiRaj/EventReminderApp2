@@ -19,23 +19,22 @@ namespace EventReminderApp2
             string qry = string.Empty;
             if (eventModel.EventId > 0)
             {
-                DateTime start = eventModel.StartDate;
-                DateTime end = eventModel.EndDate;
-
-                string startDate = start.ToString("yyyy-MM-dd");
-                string endDate = end.ToString("yyyy-MM-dd");
+                var startDate = eventModel.StartDate.ToString("yyyy-MM-dd HH:mm");
+                var endDate = eventModel.EndDate.ToString("yyyy-MM-dd HH:mm");
 
                 qry = "update tblEvents set UserId = '" + userid +
                     "', EventName= '" + eventModel.EventName + "',Description= '" + eventModel.Description + "', StartDate='" + startDate + "', EndDate='" + endDate + "' where EventId=" + eventModel.EventId;
             }
             else
             {
-                DateTime start = eventModel.StartDate;
-                DateTime end = eventModel.EndDate;
+                var startDate = eventModel.StartDate.ToString("yyyy-MM-dd HH:mm");
+                var endDate = eventModel.EndDate.ToString("yyyy-MM-dd HH:mm");
 
-                string startDate = start.ToString("yyyy-MM-dd");
-                string endDate = end.ToString("yyyy-MM-dd");
+                //DateTime start = Convert.ToDateTime(startDate);
+                //DateTime end = Convert.ToDateTime(endDate);
 
+                //string starts = eventModel.StartDate.Replace("T", " ");
+                //string ends = eventModel.EndDate.Replace("T", " ");
                 qry = "insert into tblEvents(UserId,EventName,Description,StartDate,EndDate)" +
                     " values('" + userid + "','" + eventModel.EventName + "','" + eventModel.Description + "','" + startDate + "','" + endDate + "')";
             }
@@ -55,8 +54,8 @@ namespace EventReminderApp2
             string qry = "select * from tblEvents where EventId=" + eventId;
             DataRow row = GetSQLList(qry).Rows[0];
 
-            DateTime start = Convert.ToDateTime(row.ItemArray[4]);
-            DateTime end = Convert.ToDateTime(row.ItemArray[5]);
+            //DateTime start = Convert.ToDateTime(row.ItemArray[4]);
+            //DateTime end = Convert.ToDateTime(row.ItemArray[5]);
 
             return new EventModel
             {
@@ -66,9 +65,6 @@ namespace EventReminderApp2
                 Description = row.ItemArray[3].ToString(),
                 StartDate = Convert.ToDateTime(row.ItemArray[4]),
                 EndDate = Convert.ToDateTime(row.ItemArray[5]),
-
-                //StartDate = Convert.ToDateTime(start.ToString("yyyy-MM-dd")),
-                //EndDate = Convert.ToDateTime(end.ToString("yyyy-MM-dd")),
             };
         }
 

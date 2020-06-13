@@ -49,7 +49,6 @@
                     FetchEventAndRenderCalendar();
                     showList();
                     $('#ModalSignInSignUp').modal('hide');
-
                 }
             },
             error: function () {
@@ -75,9 +74,7 @@
             url: '/User/SignUp',
             data: data,
             success: function (data) {
-                if (data.status) {
-                    //Refresh the calender
-                    // FetchEventAndRenderCalendar();
+                if (data.status) {                    
                     $('#ModalSignInSignUp').modal();
                 }
             },
@@ -93,7 +90,6 @@
     var selectedEvent = null;
     //FetchEventAndRenderCalendar();
     function FetchEventAndRenderCalendar() {
-
         events = [];
         $.ajax({
             type: "GET",
@@ -136,9 +132,9 @@
                 selectedEvent = calEvent;
                 $('#myModal #eventTitle').text(calEvent.title);
                 var $description = $('<div/>');
-                $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MMM-YYYY HH:mm a")));
+                $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MM-YYYY HH:mm a")));
                 if (calEvent.end != null) {
-                    $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MMM-YYYY HH:mm a")));
+                    $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MM-YYYY HH:mm a")));
                 }
                 $description.append($('<p/>').html('<b>Description:</b>' + calEvent.description));
                 $('#myModal #pDetails').empty().html($description);
@@ -162,8 +158,8 @@
                 var data = {
                     EventId: event.eventID,
                     EventName: event.title,
-                    StartDate: event.start.format('YYYY/MM/DD HH:mm A'),
-                    EndDate: event.end != null ? event.end.format('YYYY/MM/DD HH:mm A') : null,
+                    StartDate: event.start.format('DD-MM-YYYY HH:mm a'),
+                    EndDate: event.end != null ? event.end.format('DD-MM-YYYY HH:mm a') : null,
                     Description: event.description
                 };
                 SaveEvent(data);
@@ -186,20 +182,23 @@
         }
 
         else {
-            var startDate = moment($('#StartDate').val(), "DD/MM/YYYY HH:mm A").toDate();
-            var endDate = moment($('#EndDate').val(), "DD/MM/YYYY HH:mm A").toDate();
+            var startDate = moment($('#StartDate').val(), "DD-MM-YYYY HH:mm a").toDate();
+            var endDate = moment($('#EndDate').val(), "DD-MM-YYYY HH:mm a").toDate();
             if (startDate > endDate) {
                 alert('Invalid end date');
                 return;
             }
         }
+        //var sd = new Date($('#StartDate').val());
+        //var ed = new Date($('#EndDate').val());
+       
         var data = {
             EventId: $('#EventID').val(),
             EventName: $('#EventName').val().trim(),
             Description: $('#Description').val(),
-            StartDate: $('#StartDate').val().trim(),
-            EndDate: $('#EndDate').val().trim()
-        }
+            StartDate: $('#StartDate').val(),
+            EndDate: $('#StartDate').val()                       
+        }       
         //clearing form values
         $('#EventID').val("");
         $('#EventName').val("");
@@ -215,9 +214,11 @@
             url: '/User/SaveEvent',
             data: data,
             success: function (data) {
-                if (data.status) {                           
+                if (data.status) {
+                    console.log(data);
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
+                    showList();
                 }
             },
             error: function () {
@@ -236,6 +237,7 @@
                 if (data.status) {
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
+                    showList();
                     $('#myModalSave').modal('hide');
                 }
             },
@@ -278,8 +280,8 @@
         if (selectedEvent != null) {
             $('#hdEventID').val(selectedEvent.eventID);
             $('#txtSubject').val(selectedEvent.title);
-            $('#txtStart').val(selectedEvent.start.format('DD/MM/YYYY HH:mm A'));
-            $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD/MM/YYYY HH:mm A') : '');
+            $('#txtStart').val(selectedEvent.start.format('DD-MM-YYYY HH:mm a'));
+            $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD-MM-YYYY HH:mm a') : '');
             $('#txtDescription').val(selectedEvent.description);
         }
         $('#myModal').modal('hide');
@@ -300,8 +302,8 @@
         }
 
         else {
-            var startDate = moment($('#txtStart').val(), "DD/MM/YYYY HH:mm A").toDate();
-            var endDate = moment($('#txtEnd').val(), "DD/MM/YYYY HH:mm A").toDate();
+            var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
+            var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
             if (startDate > endDate) {
                 alert('Invalid end date');
                 return;
@@ -311,12 +313,12 @@
             EventId: $('#hdEventID').val(),
             EventName: $('#txtSubject').val().trim(),
             Description: $('#txtDescription').val(),
-            StartDate: $('#txtStart').val().trim(),
-            EndDate: $('#txtEnd').val().trim()
+            StartDate: $('#txtStart').val(),
+            EndDate: $('#txtEnd').val()
         }
         SaveEvent(data);
     })
-
+  
 
     function showList() {
         $.ajax({
@@ -324,18 +326,18 @@
             url: "/User/GetEvents",
             success: function (data) {
                 $.each(data, function (i, item) {
-                    var rows = "<tr>"
+                    var rows = "<tr id=" + item.EventId +">"
                         + "<td>" + i + "</td>"
                         + "<td>" + item.EventId + "</td>"
                         + "<td>" + item.EventName + "</td>"
                         + "<td>" + item.Description + "</td>"
                         + "<td>" + item.StartDateStr + "</td>"
                         + "<td>" + item.EndDateStr + "</td>"
+                        + "<td>" + "<button class='EditRow'" + ">Edit</button>" + "</td>"
+                        + "<td>" + "<button class='deleteRow'" + ">Delete</button>" + "</td>"
                         + "</tr>";
                     $('#tblEventList tbody').append(rows);
-                })
-
-                GenerateCalender(events);
+                });                
             },
             error: function (error) {
                 alert('failed');
@@ -343,6 +345,28 @@
         });
     }
 
+    $(".deleteRow").click(function () {
+        alert("deleted");
+        //var eventId = this.id;
+        //var confirmDelete = confirm('are you sure you want to delete this?');
+        //if (confirmDelete == true) {            
+        //    $.ajax(
+        //        {
+        //            type: "POST",
+        //            url: "User/DeleteEvent",
+        //            data: { 'eventID': eventId },                                        
+        //            success: function (result) {
+        //                $("#" + eventId).remove();                                                
+        //            },
+        //            error: function (a, b, c) {
+        //                alert(c);
+        //            }
+        //        });
+
+        //} else {
+        //    return false;
+        //}
+    });
 
     //signOut
     $('#btnSignOut').click(function () {       
@@ -457,6 +481,12 @@
             },           
         });
     }
+
+
+    //facebook authentication
+    $('#btnFacebookLogin').click(function () {
+       
+    });
 
 
 })//document.ready       
