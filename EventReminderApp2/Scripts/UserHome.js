@@ -16,6 +16,7 @@
     var loggedIn = false;
     ////////
 
+    var save;
     
     $('#backgroundImg').css('display', 'block');
     $('#tab').css('display', 'none');
@@ -165,7 +166,7 @@
                 SaveEvent(data);
             }
 
-        })
+        });
     }
 
 
@@ -212,8 +213,7 @@
             url: '/User/SaveEvent',
             data: data,
             success: function (data) {
-                if (data.status) {
-                    console.log(data);
+                if (data.status) {                       
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
                     showList();
@@ -232,12 +232,17 @@
             url: '/User/SaveEvent',
             data: data,
             success: function (data) {
-                if (data.status) {
+               // if (data.status) {
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
                     showList();
-                    $('#myModalSave').modal('hide');
-                }
+                    if (save == "UpdateEve") {
+                        $('#ModalListUpdate').modal('hide');
+                    } else {
+                        $('#myModalSave').modal('hide');
+                    }
+                    
+               // }
             },
             error: function () {
                 alert('Failed');
@@ -317,12 +322,13 @@
   
 
     function showList() {
+        $('#tblEventList tbody').empty();
         $.ajax({
             type: "GET",
             url: "/User/GetEvents",
             success: function (data) {
                 $.each(data, function (i, item) {
-                    var rows = "<tr id=" + item.EventId +">"
+                       var rows = "<tr id=" + item.EventId +">"
                         + "<td>" + i + "</td>"
                         + "<td>" + item.EventId + "</td>"
                         + "<td>" + item.EventName + "</td>"
@@ -336,10 +342,11 @@
                 }); 
 
                 $('#tblEventList tbody .EditRow').click(function () {
-                    var id = $(this).closest('tr').attr("id");
-                   // alert('edit');
+                    var eveId = $(this).closest('tr').attr("id");
+                    openEditPopUp(eveId);
                     // Event list update popup
-                  //  $('ModalListUpdate').modal();
+                   // $('ModalUpdateList').modal();
+                    //$('#ModalSignInSignUp').modal();
                     
                 });
 
@@ -354,6 +361,7 @@
                                 data: { 'eventID': eventId },
                                 success: function (result) {
                                     $("#" + eventId).remove();
+                                    FetchEventAndRenderCalendar();
                                 },
                                 error: function (a, b, c) {
                                     alert(c);
@@ -395,6 +403,64 @@
         });
     }
    
+
+    //Update event list
+    
+    $('#btnUpdateList').click(function () {
+
+        save = "UpdateEve";
+
+        //Validation/
+        if ($('#EventNameList').val().trim() == "") {
+            alert('Subject required');
+            return;
+        }
+        if ($('#StartDateList').val().trim() == "") {
+            alert('Start date required');
+            return;
+        }
+
+        else {
+            var startDate = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
+            var endDate = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
+            if (startDate > endDate) {
+                alert('Invalid end date');
+                return;
+            }
+        }
+        var data = {
+            EventId: $('#EventIdList').val(),
+            EventName: $('#EventNameList').val().trim(),
+            Description: $('#DescriptionList').val(),
+            StartDate: $('#StartDateList').val(),
+            EndDate: $('#EndDateList').val()
+        }
+        SaveEvent(data);   
+        
+    });
+
+    function openEditPopUp(eveId) {
+        $.ajax({
+            type: "POST",
+            url: "/User/Edit",
+            data: { 'id': eveId },
+            success: function (eventModel) {               
+                    $('#EventIdList').val(eventModel.EventId);
+                    $('#EventNameList').val(eventModel.EventName);
+                    $('#StartDateList').val(eventModel.StartDateStr);
+                    $('#EndDateList').val(eventModel.EndDate != null ? eventModel.EndDateStr : '');
+                    $('#DescriptionList').val(eventModel.Description);                
+
+                    $('#ModalListUpdate').modal();
+            },
+            error: function (a, b, c) {
+                alert('Failed, ' + c);
+            }
+        });                                          
+    }
+
+
+
 
     //google authentication
     $('#btnGoogleLogin').click(function () {
@@ -484,12 +550,7 @@
             },           
         });
     }
-
-
-    //facebook authentication
-    $('#btnFacebookLogin').click(function () {
-       
-    });
+    
 
 
 })//document.ready       

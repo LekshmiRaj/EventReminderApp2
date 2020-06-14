@@ -122,6 +122,13 @@ namespace EventReminderApp2.Controllers
         }
 
         [HttpPost]
+        public JsonResult Edit(int id)
+        {
+            EventModel eventModel = eventRepository.GetEventById(id);
+            return new JsonResult { Data = eventModel, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        [HttpPost]
         public JsonResult GoogleLogin(string email, string name, string gender, string lastname, string location)
         {
             var status = false;

@@ -29,7 +29,6 @@
     <link href="~/CSS/LoginReg.css" rel="stylesheet" />
     <script src="~/Scripts/RegFormValidate.js"></script>
 
-
     @*//calender*@
     <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
@@ -38,8 +37,22 @@
 
     @*<link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
 
-    @*//google api*@    
+    @*//google api*@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    <script src="~/Scripts/FacebookAuthentication.js"></script>
+    @*//facebook api*@
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: '254421055834292',
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v7.0'
+            });
+        };
+    </script>
+    <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 </head>
 <body>
@@ -183,7 +196,7 @@
                                 </div>
 
                                 <div class="col-md-9">
-                                    <input type="datetime-local" class="form-control" placeholder="MM-DD-YYYY" name="StartDate" id="StartDate" required />
+                                    <input type="datetime-local" class="form-control" placeholder="DD-MM-YYYY HH:mm a" name="StartDate" id="StartDate" required />
                                 </div>
                             </div>
 
@@ -193,7 +206,7 @@
                                 </div>
 
                                 <div class="col-md-9">
-                                    <input type="datetime-local" class="form-control" placeholder="MM-DD-YYYY" name="EndDate" id="EndDate" required />
+                                    <input type="datetime-local" class="form-control" placeholder="DD-MM-YYYY HH:mm a" name="EndDate" id="EndDate" required />
                                 </div>
                             </div>
 
@@ -303,13 +316,16 @@
     <div class="modal" id="ModalListUpdate">
         <div class="modal-dialog">
             <div class="modal-content">
-
+                <div class="modal-header">
+                    <h4 class="modal-title"> Update Event</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
                 <div class="modal-body">
-                    <div class="container register-form" id="updateListForm">
-                        <form name="UpdateForm" method=post>
+                    <div class="container" id="updateListForm">
+                        <form name="UpdateForm">
                             <div class="form-content">
-                                <p>hello</p>
-                                @*<input type="hidden" class="form-control" name="UserIdList" id="UserIdList" />
+
+                                <input type="hidden" class="form-control" name="UserIdList" id="UserIdList" />
                                 <input type="hidden" class="form-control" name="EventIdList" id="EventIdList" />
 
                                 <div class="row form-group">
@@ -336,7 +352,7 @@
                                     </div>
 
                                     <div class="col-md-9">
-                                        <input type="datetime-local" class="form-control" placeholder="MM-DD-YYYY" name="StartDateList" id="StartDateList" required />
+                                        <input type="text" class="form-control" placeholder="DD-MM-YYYY HH:mm a" name="StartDateList" id="StartDateList" required />
                                     </div>
                                 </div>
 
@@ -346,11 +362,11 @@
                                     </div>
 
                                     <div class="col-md-9">
-                                        <input type="datetime-local" class="form-control" placeholder="MM-DD-YYYY" name="EndDateList" id="EndDateList" required />
+                                        <input type="text" class="form-control" placeholder="DD-MM-YYYY HH:mm a" name="EndDateList" id="EndDateList" required />
                                     </div>
                                 </div>
 
-                                <button type="button" class="btnSubmit" id="btnUpdateList">Update</button>*@
+                                <button type="button" class="btnSubmit" id="btnUpdateList">Update</button>
                             </div>
                         </form>
                     </div>
@@ -360,6 +376,9 @@
         </div>
     </div>
     @*List update modal --end*@
+
+
+
 
     <div class="footer">
         <p>Copyright &copy; 2020 Lekshmi Raj M R</p>
