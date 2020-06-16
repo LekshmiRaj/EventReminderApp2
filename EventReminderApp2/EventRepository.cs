@@ -29,12 +29,7 @@ namespace EventReminderApp2
             {
                 var startDate = eventModel.StartDate.ToString("yyyy-MM-dd HH:mm");
                 var endDate = eventModel.EndDate.ToString("yyyy-MM-dd HH:mm");
-
-                //DateTime start = Convert.ToDateTime(startDate);
-                //DateTime end = Convert.ToDateTime(endDate);
-
-                //string starts = eventModel.StartDate.Replace("T", " ");
-                //string ends = eventModel.EndDate.Replace("T", " ");
+                
                 qry = "insert into tblEvents(UserId,EventName,Description,StartDate,EndDate)" +
                     " values('" + userid + "','" + eventModel.EventName + "','" + eventModel.Description + "','" + startDate + "','" + endDate + "')";
             }
@@ -53,10 +48,7 @@ namespace EventReminderApp2
         {
             string qry = "select * from tblEvents where EventId=" + eventId;
             DataRow row = GetSQLList(qry).Rows[0];
-
-            //DateTime start = Convert.ToDateTime(row.ItemArray[4]);
-            //DateTime end = Convert.ToDateTime(row.ItemArray[5]);
-
+          
             return new EventModel
             {
                 EventId = Convert.ToInt32(row.ItemArray[0]),
@@ -104,6 +96,28 @@ namespace EventReminderApp2
                 eventList.Add(eventModel);
             }
             return eventList;
+        }
+
+        public List<string> GetUserLoginDetails(string qry)
+        {
+            List<string> sessionVariables = new List<string>();
+            con.Open();
+            SqlCommand cmd = new SqlCommand(qry, con);
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            DataTable datatable = new DataTable();
+            sda.Fill(datatable);
+
+            if (datatable.Rows.Count == 1)
+            {
+                DataRow row = datatable.Rows[0];
+                string uid = row["UserId"].ToString();
+                string mail = row["Email"].ToString();
+                sessionVariables.Add(uid);
+                sessionVariables.Add(mail);
+            }
+            con.Close();
+            return sessionVariables;
         }
 
     }

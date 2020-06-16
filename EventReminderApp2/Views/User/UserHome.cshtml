@@ -45,29 +45,19 @@
     <script src="~/Scripts/toastr.js"></script>
 
     @*//facebook api*@
-    <script src="~/Scripts/FacebookAuthentication.js"></script>
-        @*<script>
-            window.fbAsyncInit = function () {
-                FB.init({
-                    appId: '254421055834292',
-                    autoLogAppEvents: true,
-                    xfbml: true,
-                    version: 'v7.0'
-                });
-            };
-        </script>*@
-        <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script src="~/Scripts/FacebookAuthentication.js"></script>       
+    <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 </head>
 <body>
     <div class="header">
+        <label id="currentUser"></label>
         <div class="pContainer">
             <p>Event Reminder</p>
         </div>
         <div class="btnContainer">
             <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
-            <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">SignOut</button>
-            @*<a href="/User/ClearSessions">Logout</a>*@
+            <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">SignOut</button>          
         </div>
     </div>
 

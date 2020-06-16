@@ -18,6 +18,8 @@
 
     var save;
     var fbUser;
+    var userType;
+    var currentUserEmail;
     
     $('#backgroundImg').css('display', 'block');
     $('#tab').css('display', 'none');
@@ -29,6 +31,8 @@
     })
 
     $('#btnLogin').click(function () {
+        userType = 'normal';
+        currentUserEmail = $('#inputEmail').val();
         var data = {
             Email: $('#inputEmail').val(),
             Password: $('#inputPassword').val()
@@ -50,6 +54,7 @@
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
                     showList();
+                    $('#currentUser').text(currentUserEmail);
                     $('#ModalSignInSignUp').modal('hide');
                 }
             },
@@ -397,7 +402,13 @@
         $(btnSignOut).css('display', 'none');
         $(btnSignInSignUp).css('display', 'inline-block');
         $('#inputEmail').val("");  
-        $('#inputPassword').val(""); 
+        $('#inputPassword').val("");
+        $("#currentUser").empty();
+        if (userType == 'facebook') {
+          FB.logout(function (response) {
+              console.log('facebook logout');
+          });
+        }
     });
 
     function ClearSession() {
@@ -473,6 +484,7 @@
 
     //google authentication
     $('#btnGoogleLogin').click(function () {
+        userType = 'google';
         login();
     });
 
@@ -529,6 +541,7 @@
             data: null,
             success: function (resp) {
                 user = resp;
+                $('#currentUser').text(user.email);
                 getAccountDetails(user);
                 console.log(user);
             }
@@ -564,6 +577,7 @@
     //////facebook authentication
    
     $('#btnFacebookLogin').click(function () {
+        userType = 'facebook';
         fbLogin();
     });
 
@@ -612,7 +626,8 @@
         FB.api('/me', { locale: 'en_US', fields: 'id,first_name,last_name,email,link,gender,locale,picture' },
             function (response) {
                 console.log(response);
-                fbUser = response;
+                fbUser = response;                
+                $('#currentUser').text(fbUser.email);
                 StoreAccountDetails(fbUser);
             });
     }
