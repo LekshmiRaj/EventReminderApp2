@@ -163,8 +163,42 @@ namespace EventReminderApp2.Controllers
             }
             return new JsonResult { Data = new { status = status } };
         }
-               
 
+        [HttpPost]
+        public JsonResult FacebookLogin(string email, string name)
+        {
+            var status = false;
+            using (SqlConnection con = new SqlConnection(ConnectionString))
+            {
+                string qry;
+                con.Open();
+                string query = $"Select UserId,Email from [dbo].[tblRegistration] where Email='{email}' ";
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.CommandType = CommandType.Text;
+
+                SqlDataAdapter sda = new SqlDataAdapter(cmd);
+                DataTable datatable = new DataTable();
+                sda.Fill(datatable);
+                if (datatable.Rows.Count == 1)
+                {
+                    DataRow row = datatable.Rows[0];
+                    string uid = row["UserId"].ToString();
+                    string mail = row["Email"].ToString();
+                    Session["userid"] = uid;
+                    Session["email"] = mail;
+
+                    status = true;
+                }
+                else
+                {
+                    qry = "insert into tblRegistration(UserName,Email)" +
+                    " values('" + name + "','" + email + "')";
+                    eventRepository.AddUpdateDeleteSQL(qry);
+                    status = true;
+                }
+            }
+            return new JsonResult { Data = new { status = status } };
+        }
 
     }
 }

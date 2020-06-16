@@ -40,19 +40,23 @@
     @*//google api*@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 
-    <script src="~/Scripts/FacebookAuthentication.js"></script>
+    @*toastr*@
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+    <script src="~/Scripts/toastr.js"></script>
+
     @*//facebook api*@
-    <script>
-        window.fbAsyncInit = function () {
-            FB.init({
-                appId: '254421055834292',
-                autoLogAppEvents: true,
-                xfbml: true,
-                version: 'v7.0'
-            });
-        };
-    </script>
-    <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
+    <script src="~/Scripts/FacebookAuthentication.js"></script>
+        @*<script>
+            window.fbAsyncInit = function () {
+                FB.init({
+                    appId: '254421055834292',
+                    autoLogAppEvents: true,
+                    xfbml: true,
+                    version: 'v7.0'
+                });
+            };
+        </script>*@
+        <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 </head>
 <body>
@@ -167,6 +171,7 @@
 
                 <div class="container register-form" id="createForm">
                     <form name="CreateForm" method=post>
+                       
                         <div class="form-content">
 
                             <input type="hidden" class="form-control" name="UserId" id="UserId" />
@@ -376,7 +381,6 @@
         </div>
     </div>
     @*List update modal --end*@
-
 
 
 
