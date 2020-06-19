@@ -652,6 +652,22 @@
         });
     }
 
+    //email notification
+    //$('#btnSendEmail').click(function () {
+    //    SendEmail();
+    //});
+
+    //function SendEmail() {
+    //    $.ajax({
+    //        url: '/User/SendMailToUser',
+    //        type: 'POST',            
+    //        success: function (data) {
+                               
+    //        },
+    //    });
+    //}
+
+
 
 })//document.ready       
 

@@ -120,5 +120,31 @@ namespace EventReminderApp2
             return sessionVariables;
         }
 
+        public List<EventModel> GetMailDetails(string qry)
+        {
+            List<EventModel> mailDetails = new List<EventModel>();
+            con.Open();
+            SqlCommand cmd = new SqlCommand(qry, con);
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            DataTable datatable = new DataTable();
+            sda.Fill(datatable);
+
+            if (datatable.Rows.Count != 0)
+            {
+                foreach (DataRow row in datatable.Rows)
+                {
+                    EventModel eventModel = new EventModel();
+                    eventModel.Email= row["Email"].ToString();
+                    eventModel.StartDate= Convert.ToDateTime(row["StartDate"]);
+                    eventModel.EventName= row["EventName"].ToString();
+                    eventModel.Description= row["Description"].ToString();
+                    mailDetails.Add(eventModel);
+                }
+            }                
+            con.Close();
+            return mailDetails;
+        }
+
     }
 }
