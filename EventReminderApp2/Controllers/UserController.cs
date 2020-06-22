@@ -13,11 +13,12 @@ namespace EventReminderApp2.Controllers
     public class UserController : Controller
     {        
         EventRepository eventRepository = new EventRepository();
+        bool refresh = false;
 
         public UserController()
         {
             Timer myTimer = new Timer();
-            myTimer.Interval = 60000; //3600000;
+            myTimer.Interval = 60000;
             myTimer.AutoReset = true;
             myTimer.Elapsed += new ElapsedEventHandler(SendMailToUser);
             myTimer.Enabled = true;
@@ -30,8 +31,15 @@ namespace EventReminderApp2.Controllers
         }
 
         public ActionResult UserHome()
-        {            
-            return View();
+        {
+            if (Session["userid"] != null)
+            {
+                refresh = true;
+                return View();
+               // return RedirectToAction("SignIn");
+            }            
+            return View();            
+           
         }
 
 
@@ -55,12 +63,18 @@ namespace EventReminderApp2.Controllers
         public JsonResult SignIn(Registration login)
         {
             var status = false;
+
+            //if (refresh == true) {
+            //    status = true;
+            //    return new JsonResult { Data = new { status = status } };
+            //}
+            
             string query = $"Select UserId,Email,Password from [dbo].[tblRegistration] where Email='{login.Email}' and Password='{login.Password}'";
             List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
 
             string uId = sessionVariables[0];
             string uEmail = sessionVariables[1];
-
+            
             if (sessionVariables != null)
             {
                 Session["userid"] = uId;
@@ -224,6 +238,31 @@ namespace EventReminderApp2.Controllers
                 return false;
             }
 
+        }
+
+        [HttpPost]
+        public JsonResult ResetPassword(string email)
+        {
+            string pass;
+            string qry;
+            var status = false;
+            string query = $"Select Email from [dbo].[tblRegistration] where Email='{email}' ";
+            bool verify = eventRepository.verifyEmail(query);
+            if (verify)
+            {
+                qry= $"Select Password from [dbo].[tblRegistration] where Email='{email}' ";
+                pass = eventRepository.getPassword(qry);
+                //send mail
+                string ebody = "<p>Hi,<br />Your password is-<br /> "+pass+ "</ p > ";
+                SendEmail(email, "Password", ebody);
+                status = true;
+                return new JsonResult { Data = new { status = status } };
+            }
+            else
+            {
+                return new JsonResult { Data = new { status = status } };
+            }
+                                              
         }
 
     }

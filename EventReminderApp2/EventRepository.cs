@@ -68,7 +68,7 @@ namespace EventReminderApp2
             System.Data.DataTable datatable = new System.Data.DataTable();
             datatable.Load(sdr);
             con.Close();
-            return datatable;
+            return datatable;            
         }
 
         public int DeleteEvent(int eventId)
@@ -146,5 +146,33 @@ namespace EventReminderApp2
             return mailDetails;
         }
 
+        public bool verifyEmail(string qry)
+        {
+            DataTable datatable = GetSQLList(qry);
+            if (datatable != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string getPassword(string qry)
+        {
+            string pass = "";
+            DataTable dataTable = GetSQLList(qry);
+
+            if(dataTable != null)
+            {
+              DataRow row = GetSQLList(qry).Rows[0];
+                if(row != null)
+                {
+                   pass = row["Password"].ToString();
+                }
+            }
+            return pass;
+        }
     }
 }

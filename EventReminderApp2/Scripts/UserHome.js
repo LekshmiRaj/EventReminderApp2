@@ -9,11 +9,8 @@
     var LOGOUT = 'http://localhost:60256/User/UserHome';
     var TYPE = 'token';
     var _url = OAUTHURL + 'scope=' + SCOPE + '&client_id=' + CLIENTID + '&redirect_uri=' + REDIRECT + '&response_type=' + TYPE;
-    var acToken;
-    var tokenType;
-    var expiresIn;
-    var user;
-    var loggedIn = false;
+    var acToken;    
+    var user;    
     ////////
 
     var save;
@@ -95,8 +92,7 @@
 
     ///calnder///
     var events = [];
-    var selectedEvent = null;
-    //FetchEventAndRenderCalendar();
+    var selectedEvent = null;   
     function FetchEventAndRenderCalendar() {
         events = [];
         $.ajax({
@@ -221,13 +217,10 @@
             type: "POST",
             url: '/User/SaveEvent',
             data: data,
-            success: function (data) {
-                //if (data.status) {                         
-                //Refresh the calender   
+            success: function (data) {                                                        
                 toastr.success("Event created sucessfully...", "Sucess");
-                    FetchEventAndRenderCalendar();
-                    showList();
-               // }
+                FetchEventAndRenderCalendar();
+                showList();               
             },
             error: function () {
                 alert('Failed');
@@ -241,19 +234,15 @@
             type: "POST",
             url: '/User/SaveEvent',
             data: data,
-            success: function (data) {
-               // if (data.status) {
-                    //Refresh the calender
+            success: function (data) {               
                     FetchEventAndRenderCalendar();
                     showList();
-                if (save == "UpdateEve") {
+                    if (save == "UpdateEve") {
                         toastr.success("Event Updated sucessfully...", "Update");
                         $('#ModalListUpdate').modal('hide');
                     } else {
                         $('#myModalSave').modal('hide');
-                    }
-                    
-               // }
+                    }                                  
             },
             error: function () {
                 alert('Failed');
@@ -356,11 +345,7 @@
 
                 $('#tblEventList tbody .EditRow').click(function () {
                     var eveId = $(this).closest('tr').attr("id");
-                    openEditPopUp(eveId);
-                    // Event list update popup
-                   // $('ModalUpdateList').modal();
-                    //$('#ModalSignInSignUp').modal();
-                    
+                    openEditPopUp(eveId);                                       
                 });
 
                 $("#tblEventList tbody .deleteRow").click(function () {                    
@@ -479,7 +464,32 @@
         });                                          
     }
 
+    //forgot password
+    $("#btnResetPassword").click(function () {
+        var data = {
+            Email: $('#resetEmail').val()           
+        }
+        forgotPassword(data);
+    });
 
+    function forgotPassword(data) {
+        $.ajax({
+            type: "POST",
+            url: '/User/ResetPassword',
+            data: data,
+            success: function (data) {
+                if (data.status) {
+                    toastr.success("Password is send to your registered email", "Check mail");
+                }
+                else {
+                    toastr.warning("Incorrect mail id", "Not found");
+                }
+            },
+            error: function () {
+                alert('Failed');
+            }
+        })
+    }
 
 
     //google authentication
@@ -651,24 +661,7 @@
             },
         });
     }
-
-    //email notification
-    //$('#btnSendEmail').click(function () {
-    //    SendEmail();
-    //});
-
-    //function SendEmail() {
-    //    $.ajax({
-    //        url: '/User/SendMailToUser',
-    //        type: 'POST',            
-    //        success: function (data) {
-                               
-    //        },
-    //    });
-    //}
-
-
-
+   
 })//document.ready       
 
 

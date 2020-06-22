@@ -272,21 +272,14 @@
                         </form>
 
 
-                        <form action="#" class="form-reset">
+                        <form class="form-reset">
                             <input type="email" id="resetEmail" class="form-control" placeholder="Email address" required="" autofocus="">
-                            <button class="btn btn-primary btn-block" type="submit">Reset Password</button>
+                            <button class="btn btn-primary btn-block" id="btnResetPassword" type="button">Reset Password</button>
                             <a href="#" id="cancel_reset"><i class="fas fa-angle-left"></i> Back</a>
                         </form>
 
 
-                        <form class="form-signup">
-                            <div class="social-login">
-                                <button class="btn facebook-btn social-btn" type="button"><span><i class="fab fa-facebook-f"></i> Sign up with Facebook</span> </button>
-                            </div>
-                            <div class="social-login">
-                                <button class="btn google-btn social-btn" type="button"><span><i class="fab fa-google-plus-g"></i> Sign up with Google+</span> </button>
-                            </div>
-                            <p style="text-align:center">OR</p>
+                        <form class="form-signup">                            
                             <input type="text" id="user-name" class="form-control" placeholder="Username" name="UserName" required autofocus="">
                             <input type="email" id="user-email" class="form-control" placeholder="Email address" name="Email" required autofocus="">
                             <input type="password" id="user-pass" class="form-control" placeholder="Password" name="Password" required autofocus="">
@@ -305,7 +298,6 @@
         </div>
     </div>
     @*end--Login modal*@
-
 
     @*Event List Update modal*@
     <div class="modal" id="ModalListUpdate">
@@ -371,8 +363,6 @@
         </div>
     </div>
     @*List update modal --end*@
-
-
 
     <div class="footer">
         <p>Copyright &copy; 2020 Lekshmi Raj M R</p>
