@@ -50,6 +50,13 @@
 
 </head>
 <body>
+    @if (ViewBag.USERID != null && ViewBag.EMAIL != null)
+    {
+        <input type="hidden" class="form-control" id="SessionUserId" value="@ViewBag.USERID" />
+        <input type="hidden" class="form-control" id="SessionEmail" value="@ViewBag.EMAIL" />
+        <input type="hidden" class="form-control" id="SessionUserName" value="@ViewBag.USERNAME" />
+    }
+
     <div class="header">
         <label id="currentUser"></label>
         <div class="pContainer">
@@ -59,7 +66,7 @@
             <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
             <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">SignOut</button>
         </div>
-    </div>    
+    </div>
 
     @*background*@
     <div id="backgroundImg">
@@ -279,7 +286,7 @@
                         </form>
 
 
-                        <form class="form-signup">                            
+                        <form class="form-signup">
                             <input type="text" id="user-name" class="form-control" placeholder="Username" name="UserName" required autofocus="">
                             <input type="email" id="user-email" class="form-control" placeholder="Email address" name="Email" required autofocus="">
                             <input type="password" id="user-pass" class="form-control" placeholder="Password" name="Password" required autofocus="">

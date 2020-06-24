@@ -21,6 +21,18 @@
     $('#backgroundImg').css('display', 'block');
     $('#tab').css('display', 'none');
 
+    if ($('#SessionUserId').val() != null && $('#SessionEmail').val() != null) {
+
+        $('#backgroundImg').css('display', 'none');
+        $('#tab').css('display', 'block');
+        $(btnSignInSignUp).css('display', 'none');
+        $(btnSignOut).css('display', 'inline-block');
+        FetchEventAndRenderCalendar();
+        showList();
+        $('#currentUser').text($('#SessionUserName').val());
+        $('#ModalSignInSignUp').modal('hide');               
+    }
+
     ////login////
     $('#btnSignInSignUp').click(function () {
         //Open modal dialog for signin/signup
@@ -51,7 +63,7 @@
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
                     showList();
-                    $('#currentUser').text(currentUserEmail);
+                    $('#currentUser').text(data.username);
                     $('#ModalSignInSignUp').modal('hide');
                 }
             },
@@ -551,7 +563,7 @@
             data: null,
             success: function (resp) {
                 user = resp;
-                $('#currentUser').text(user.email);
+                $('#currentUser').text(user.name);
                 getAccountDetails(user);
                 console.log(user);
             }
@@ -637,7 +649,7 @@
             function (response) {
                 console.log(response);
                 fbUser = response;                
-                $('#currentUser').text(fbUser.email);
+                $('#currentUser').text(fbUser.first_name);
                 StoreAccountDetails(fbUser);
             });
     }

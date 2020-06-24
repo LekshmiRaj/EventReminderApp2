@@ -6,14 +6,16 @@ using System.Net.Mail;
 using System.Text;
 using System.Web.Mvc;
 using System.Timers;
-
+using System.IO;
 
 namespace EventReminderApp2.Controllers
 {
     public class UserController : Controller
     {        
-        EventRepository eventRepository = new EventRepository();
-        bool refresh = false;
+        EventRepository eventRepository = new EventRepository();       
+
+        string logFormat = string.Empty;
+        string logPath = string.Empty;
 
         public UserController()
         {
@@ -31,15 +33,15 @@ namespace EventReminderApp2.Controllers
         }
 
         public ActionResult UserHome()
-        {
+        {            
             if (Session["userid"] != null)
             {
-                refresh = true;
-                return View();
-               // return RedirectToAction("SignIn");
+                ViewBag.USERID = Session["userid"];
+                ViewBag.EMAIL = Session["email"];
+                ViewBag.USERNAME = Session["username"];
+                return View();             
             }            
-            return View();            
-           
+            return View();                       
         }
 
 
@@ -63,24 +65,21 @@ namespace EventReminderApp2.Controllers
         public JsonResult SignIn(Registration login)
         {
             var status = false;
-
-            //if (refresh == true) {
-            //    status = true;
-            //    return new JsonResult { Data = new { status = status } };
-            //}
             
-            string query = $"Select UserId,Email,Password from [dbo].[tblRegistration] where Email='{login.Email}' and Password='{login.Password}'";
+            string query = $"Select UserId,Email,Password,UserName from [dbo].[tblRegistration] where Email='{login.Email}' and Password='{login.Password}'";
             List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
 
             string uId = sessionVariables[0];
             string uEmail = sessionVariables[1];
-            
+            string uname = sessionVariables[2];
+
             if (sessionVariables != null)
             {
                 Session["userid"] = uId;
                 Session["email"] = uEmail;
+                Session["username"] = uname;
                 status = true;
-                return new JsonResult { Data = new { status = status } };
+                return new JsonResult { Data = new { status = status,username= uname } };
             }
             else
             {
@@ -142,17 +141,19 @@ namespace EventReminderApp2.Controllers
         {
             string qry;
             var status = false;
-            string query = $"Select UserId,Email from [dbo].[tblRegistration] where Email='{email}' ";
+            string query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
 
             List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
 
             string uId = sessionVariables[0];
             string uEmail = sessionVariables[1];
+            string uname = sessionVariables[2];
 
             if (sessionVariables != null)
             {
                 Session["userid"] = uId;
                 Session["email"] = uEmail;
+                Session["username"] = uname;
                 status = true;
             }
             else
@@ -171,17 +172,19 @@ namespace EventReminderApp2.Controllers
         {
             string qry;
             var status = false;
-            string query = $"Select UserId,Email from [dbo].[tblRegistration] where Email='{email}' ";
+            string query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
 
             List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
 
             string uId = sessionVariables[0];
             string uEmail = sessionVariables[1];
+            string uname = sessionVariables[2];
 
             if (sessionVariables != null)
             {
                 Session["userid"] = uId;
                 Session["email"] = uEmail;
+                Session["username"] = uname;
                 status = true;
             }
             else
@@ -234,10 +237,21 @@ namespace EventReminderApp2.Controllers
             }
             catch(Exception ex)
             {
-                Exception e = ex;               
+                string e = ex.ToString();
+                writeLogFile(toEmail,e);
                 return false;
             }
+        }
+        
+        public void writeLogFile(string toEmail, string e)
+        {
+            logPath = @"D:\EmailLogFile";
+            logFormat = DateTime.Now.ToLongDateString().ToString() + " - " +
+                DateTime.Now.ToLongTimeString().ToString() + " ==> ";
 
+            System.IO.File.AppendAllText(logPath + "\\" + "LogFile.txt", logFormat +" " +toEmail + "Reason- " + e+ Environment.NewLine);
+                  
+            return;
         }
 
         [HttpPost]
@@ -264,6 +278,6 @@ namespace EventReminderApp2.Controllers
             }
                                               
         }
-
+        
     }
 }

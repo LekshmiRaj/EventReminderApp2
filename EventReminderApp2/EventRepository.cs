@@ -113,8 +113,10 @@ namespace EventReminderApp2
                 DataRow row = datatable.Rows[0];
                 string uid = row["UserId"].ToString();
                 string mail = row["Email"].ToString();
+                string name = row["UserName"].ToString();
                 sessionVariables.Add(uid);
                 sessionVariables.Add(mail);
+                sessionVariables.Add(name);
             }
             con.Close();
             return sessionVariables;
