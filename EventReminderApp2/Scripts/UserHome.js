@@ -15,8 +15,7 @@
 
     var save;
     var fbUser;
-    var userType;
-    var currentUserEmail;
+    var userType;   
     
     $('#backgroundImg').css('display', 'block');
     $('#tab').css('display', 'none');
@@ -487,11 +486,11 @@
     function forgotPassword(data) {
         $.ajax({
             type: "POST",
-            url: '/User/ResetPassword',
+            url: '/User/ForgotPassword',
             data: data,
             success: function (data) {
                 if (data.status) {
-                    toastr.success("Password is send to your registered email", "Check mail");
+                    toastr.success("A link is send to your registered email", "Check mail");
                 }
                 else {
                     toastr.warning("Incorrect mail id", "Not found");

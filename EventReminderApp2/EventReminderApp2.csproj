@@ -197,6 +197,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Registration.cs" />
+    <Compile Include="Models\ResetPasswordModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -211,6 +212,7 @@
     <Content Include="CSS\Home.css" />
     <Content Include="CSS\LoginReg.css" />
     <Content Include="CSS\NavTabss.css" />
+    <Content Include="CSS\ResetPassword.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -233,6 +235,7 @@
     <Content Include="Scripts\LoginReg.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\RegFormValidate.js" />
+    <Content Include="Scripts\ResetPassword.js" />
     <Content Include="Scripts\toastr.js" />
     <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\UserHome.js" />
@@ -273,6 +276,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\User\UserHome.cshtml" />
+    <Content Include="Views\User\ResetPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

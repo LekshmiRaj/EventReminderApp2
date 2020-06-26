@@ -176,5 +176,32 @@ namespace EventReminderApp2
             }
             return pass;
         }
+
+        public List<Registration> GetUser(string qry)
+        {
+            List<Registration> user = new List<Registration>();
+            con.Open();
+            SqlCommand cmd = new SqlCommand(qry, con);
+            cmd.CommandType = CommandType.Text;
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            DataTable datatable = new DataTable();
+            sda.Fill(datatable);
+
+            if (datatable.Rows.Count != 0)
+            {
+                foreach (DataRow row in datatable.Rows)
+                {
+                    Registration registration = new Registration();
+                    registration.UserId = Convert.ToInt32(row["UserId"]);
+                    registration.UserName = row["UserName"].ToString();
+                    registration.Email = row["Email"].ToString();
+                    registration.Password = row["Password"].ToString();
+                    registration.ResetPasswordCode = row["ResetPasswordCode"].ToString();
+                    user.Add(registration);
+                }
+            }
+            con.Close();
+            return user;
+        }
     }
 }

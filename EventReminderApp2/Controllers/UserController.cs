@@ -254,21 +254,43 @@ namespace EventReminderApp2.Controllers
             return;
         }
 
-        [HttpPost]
-        public JsonResult ResetPassword(string email)
+        public void SendResetPasswordLinkEmail(string toEmail, string activationCode)
         {
-            string pass;
+            var verifyUrl = "/User/ResetPassword/" + activationCode;
+            var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
+            var subject = "Reset Password";
+            string ebody = "<p>Hi,<br /><br/>We got request for reset your account password. Please click on the below link to reset your password" +
+                    "<br/><br/><a href=" + link + ">Reset password link</a>";
+
+            string senderEmail = System.Configuration.ConfigurationManager.AppSettings["SenderEmail"].ToString();
+                string senderPassword = System.Configuration.ConfigurationManager.AppSettings["SenderPassword"].ToString(); ;
+
+                SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+                client.EnableSsl = true;
+                client.Timeout = 100000;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                MailMessage mailMessage = new MailMessage(senderEmail, toEmail, subject, ebody);
+                mailMessage.IsBodyHtml = true;
+                mailMessage.BodyEncoding = UTF8Encoding.UTF8;
+                client.Send(mailMessage);
+                return;
+        }
+
+        [HttpPost]
+        public JsonResult ForgotPassword(string email)
+        {            
             string qry;
             var status = false;
             string query = $"Select Email from [dbo].[tblRegistration] where Email='{email}' ";
             bool verify = eventRepository.verifyEmail(query);
             if (verify)
-            {
-                qry= $"Select Password from [dbo].[tblRegistration] where Email='{email}' ";
-                pass = eventRepository.getPassword(qry);
-                //send mail
-                string ebody = "<p>Hi,<br />Your password is-<br /> "+pass+ "</ p > ";
-                SendEmail(email, "Password", ebody);
+            {                                
+                string resetCode = Guid.NewGuid().ToString();
+                SendResetPasswordLinkEmail(email, resetCode);
+                qry=$"update tblRegistration set ResetPasswordCode='{resetCode}' where Email='{email}'";
+                eventRepository.AddUpdateDeleteSQL(qry);
                 status = true;
                 return new JsonResult { Data = new { status = status } };
             }
@@ -278,6 +300,40 @@ namespace EventReminderApp2.Controllers
             }
                                               
         }
-        
+
+        public ActionResult ResetPassword(string id)
+        {
+            string qry= $"Select * from [dbo].[tblRegistration] where ResetPasswordCode='{id}' ";
+            var user = eventRepository.GetUser(qry);
+            if(user != null)
+            {
+                ResetPasswordModel resetPasswordModel = new ResetPasswordModel();
+                resetPasswordModel.ResetCode = id;
+                return View(resetPasswordModel);
+            }
+            else
+            {
+                return HttpNotFound();
+            }            
+        }
+
+        [HttpPost]
+        public ActionResult ResetPassword(ResetPasswordModel resetPasswordModel)
+        {
+            string qry = $"Select * from [dbo].[tblRegistration] where ResetPasswordCode='{resetPasswordModel.ResetCode}' ";
+            var user = eventRepository.GetUser(qry);
+            if(user != null)
+            {
+                string query= "update tblRegistration set Password = '" + resetPasswordModel.NewPassword + "' where ResetPasswordCode ='" + resetPasswordModel.ResetCode+"'";
+                eventRepository.AddUpdateDeleteSQL(query);
+                string query2= "update tblRegistration set ResetPasswordCode = '" + "" + "' where ResetPasswordCode ='" + resetPasswordModel.ResetCode+"'";
+                ViewBag.Message = "New password updated successfully";
+            }
+            else
+            {
+                ViewBag.Message = "Something invalid";
+            }
+            return View(resetPasswordModel);
+        }
     }
 }
