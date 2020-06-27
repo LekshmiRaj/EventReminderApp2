@@ -176,32 +176,19 @@ namespace EventReminderApp2
             }
             return pass;
         }
+        
+        public Registration Get_User(string qry)
+        {            
+            DataRow row = GetSQLList(qry).Rows[0];
 
-        public List<Registration> GetUser(string qry)
-        {
-            List<Registration> user = new List<Registration>();
-            con.Open();
-            SqlCommand cmd = new SqlCommand(qry, con);
-            cmd.CommandType = CommandType.Text;
-            SqlDataAdapter sda = new SqlDataAdapter(cmd);
-            DataTable datatable = new DataTable();
-            sda.Fill(datatable);
-
-            if (datatable.Rows.Count != 0)
-            {
-                foreach (DataRow row in datatable.Rows)
-                {
-                    Registration registration = new Registration();
-                    registration.UserId = Convert.ToInt32(row["UserId"]);
-                    registration.UserName = row["UserName"].ToString();
-                    registration.Email = row["Email"].ToString();
-                    registration.Password = row["Password"].ToString();
-                    registration.ResetPasswordCode = row["ResetPasswordCode"].ToString();
-                    user.Add(registration);
-                }
-            }
-            con.Close();
-            return user;
+            return new Registration
+            {               
+                UserId = Convert.ToInt32(row["UserId"]),
+                UserName = row["UserName"].ToString(),
+                Email = row["Email"].ToString(), 
+                Password= row["Password"].ToString(),
+                ResetPasswordCode = row["ResetPasswordCode"].ToString()
+            };
         }
     }
 }

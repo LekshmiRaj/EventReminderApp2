@@ -672,7 +672,78 @@
             },
         });
     }
+
+    $('#currentUser').click(function () {
+        openUserDetailsEditPopUp();
+    });
+
+    function openUserDetailsEditPopUp() {
+        $.ajax({
+            type: "POST",
+            url: "/User/GetUserDetails",            
+            success: function (regUser) {
+                $('#uId').val(regUser.UserId);
+                $('#uName').val(regUser.UserName);
+                $('#uEmail').val(regUser.Email);
+                $('#ModalUserDetails').modal(); 
+            },
+            error: function (a, b, c) {
+                alert('Failed, ' + c);
+            }
+        });
+    }
    
+    $('#btnEditUserDetails').click(function () {
+       
+        //Validation/
+        if ($('#uName').val().trim() == "") {
+            alert('User name required');
+            return;
+        }
+        if ($('#uEmail').val().trim() == "") {
+            alert('Email required');
+            return;
+        }
+
+        else
+        {
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if (!$('#uEmail').val().match(mailformat))
+            {
+            alert("You have entered an invalid email address!");
+            return;            
+            }
+        }
+        
+        var userData = {
+            UserId: $('#uId').val(),
+            UserName: $('#uName').val().trim(),
+            Email: $('#uEmail').val()            
+        }
+        UpdateUser(userData);
+
+    });
+
+    function UpdateUser(userData) {
+        $.ajax({
+            type: "POST",
+            url: '/User/UpdateUserDetails',
+            data: userData,
+            success: function (data) {
+                if (data.status) {
+                    toastr.success("Updated sucessfully...", "Sucess");
+                    $('#currentUser').text(data.username);
+                    $('#ModalUserDetails').modal('hide'); 
+                }
+            },
+            error: function () {
+                alert('Failed');
+            }
+        })
+    }
+
+
+       
 })//document.ready       
 
 

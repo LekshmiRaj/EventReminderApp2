@@ -10,8 +10,8 @@ $(document).ready(function () {
 
 
 function isInputsValid() {    
-    var password = document.getElementById("NewPassword").value();
-    var repassword = document.getElementById("ConfirmPassword").value();
+    var password = document.getElementById("NewPassword").value;
+    var repassword = document.getElementById("ConfirmPassword").value;
 
     var isValid = true;
     

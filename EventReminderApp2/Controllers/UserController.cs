@@ -304,7 +304,7 @@ namespace EventReminderApp2.Controllers
         public ActionResult ResetPassword(string id)
         {
             string qry= $"Select * from [dbo].[tblRegistration] where ResetPasswordCode='{id}' ";
-            var user = eventRepository.GetUser(qry);
+            var user = eventRepository.Get_User(qry);
             if(user != null)
             {
                 ResetPasswordModel resetPasswordModel = new ResetPasswordModel();
@@ -321,7 +321,7 @@ namespace EventReminderApp2.Controllers
         public ActionResult ResetPassword(ResetPasswordModel resetPasswordModel)
         {
             string qry = $"Select * from [dbo].[tblRegistration] where ResetPasswordCode='{resetPasswordModel.ResetCode}' ";
-            var user = eventRepository.GetUser(qry);
+            var user = eventRepository.Get_User(qry);
             if(user != null)
             {
                 string query= "update tblRegistration set Password = '" + resetPasswordModel.NewPassword + "' where ResetPasswordCode ='" + resetPasswordModel.ResetCode+"'";
@@ -334,6 +334,36 @@ namespace EventReminderApp2.Controllers
                 ViewBag.Message = "Something invalid";
             }
             return View(resetPasswordModel);
+        }
+
+        [HttpPost]
+        public JsonResult GetUserDetails()
+        {
+            string userid="";
+            if (Session["userid"] != null)
+            {
+                userid = Session["userid"].ToString();
+            }
+            string qry = $"Select * from [dbo].[tblRegistration] where UserId='{userid}' ";
+            Registration regUser = eventRepository.Get_User(qry);
+            return new JsonResult { Data = regUser, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        [HttpPost]
+        public ActionResult UpdateUserDetails(Registration registration)
+        {
+            var status = false;
+            string query = "update tblRegistration set UserName = '" + registration.UserName +
+                    "', Email= '" + registration.Email + "' where UserId=" + registration.UserId;
+            int count = eventRepository.AddUpdateDeleteSQL(query);
+
+            if (count == 1)
+            {
+                status = true;
+                Session["email"] = registration.Email;
+                Session["username"] = registration.UserName;
+            }
+            return new JsonResult { Data = new { status = status, username = registration.UserName } };
         }
     }
 }
