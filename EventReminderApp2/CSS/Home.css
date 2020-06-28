@@ -53,3 +53,15 @@
     margin-left: 5px;
     width: auto;
 }
+
+#btnCreateEvent {
+    margin-left: 20px;
+    margin-bottom:15px;
+    border: none;
+    border-radius: 1.5rem;
+    padding: .2%;
+    width: 5%;
+    cursor: pointer;
+    background: orange;
+    color: #fff;
+}

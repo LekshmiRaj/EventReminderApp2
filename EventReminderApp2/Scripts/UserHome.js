@@ -75,13 +75,37 @@
 
     ///register///
     $('#btn-SignUp').click(function () {
-        var RegData = {
-            UserName: $('#user-name').val(),
-            Email: $('#user-email').val(),
-            Password: $('#user-pass').val()
+        var isValid = true;
+        if ($('#user-name').val() == "") {
+            alert("User name is required");
+            //isValid = false;
+            return;
         }
-        Register(RegData);
-    })
+
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!$('#user-email').val().match(mailformat)) {
+            alert("You have entered an invalid email address!");
+            document.getElementById("user-email").focus();
+            //isValid = false;
+            return;
+        }
+       
+        if (!$('#user-pass').val().match($('#user-repeatpass').val())) {
+            alert("Password does not match");
+            document.getElementById("user-repeatpass").focus();
+           // isValid = false;
+            return;
+        }        
+
+       // if (isValid) {
+            var RegData = {
+                UserName: $('#user-name').val(),
+                Email: $('#user-email').val(),
+                Password: $('#user-pass').val()
+            }
+            Register(RegData);
+       // } 
+    });
 
     function Register(data) {
         $.ajax({
@@ -187,6 +211,10 @@
     ////create event////       
     $('#btnSubmitCreate').click(function () {
         //Validation/
+
+        var date1 = $('#StartDate').val();
+        var date2 = $('#EndDate').val();        
+
         if ($('#EventName').val().trim() == "") {
             alert('EventName is required');
             return;
@@ -196,6 +224,13 @@
             return;
         }
 
+        if (new Date(date1).getDate() == new Date(date2).getDate()) {
+          if (new Date(date1).getTime() == new Date(date2).getTime()) {
+              alert('Invalid end date');
+              return;
+          }
+        }
+            
         else {
             var startDate = moment($('#StartDate').val(), "DD-MM-YYYY HH:mm a").toDate();
             var endDate = moment($('#EndDate').val(), "DD-MM-YYYY HH:mm a").toDate();
@@ -231,7 +266,8 @@
             success: function (data) {                                                        
                 toastr.success("Event created sucessfully...", "Sucess");
                 FetchEventAndRenderCalendar();
-                showList();               
+                showList();   
+                $('#createEventModal').modal('hide'); 
             },
             error: function () {
                 alert('Failed');
@@ -306,6 +342,10 @@
 
     $('#btnSave').click(function () {
         //Validation/
+
+        var date1 = $('#txtStart').val();
+        var date2 = $('#txtEnd').val();       
+
         if ($('#txtSubject').val().trim() == "") {
             alert('Subject required');
             return;
@@ -313,6 +353,13 @@
         if ($('#txtStart').val().trim() == "") {
             alert('Start date required');
             return;
+        }
+
+        if (new Date(date1).getDate() == new Date(date2).getDate()) {
+            if (new Date(date1).getTime() == new Date(date2).getTime()) {
+                alert('Invalid end date');
+                return;
+            }
         }
 
         else {
@@ -426,6 +473,9 @@
 
         save = "UpdateEve";
 
+        var date1 = $('#StartDateList').val();
+        var date2 = $('#EndDateList').val();   
+
         //Validation/
         if ($('#EventNameList').val().trim() == "") {
             alert('Subject required');
@@ -434,6 +484,13 @@
         if ($('#StartDateList').val().trim() == "") {
             alert('Start date required');
             return;
+        }
+
+        if (new Date(date1).getDate() == new Date(date2).getDate()) {
+            if (new Date(date1).getTime() == new Date(date2).getTime()) {
+                alert('Invalid end date');
+                return;
+            }
         }
 
         else {
@@ -742,7 +799,9 @@
         })
     }
 
-
+    $('#btnCreateEvent').click(function () {
+        $('#createEventModal').modal();       
+    });
        
 })//document.ready       
 

@@ -22,7 +22,7 @@
     <link href="~/CSS/NavTabss.css" rel="stylesheet" />
     <script src="~/Scripts/LoginReg.js"></script>
     <link href="~/CSS/LoginReg.css" rel="stylesheet" />
-    <script src="~/Scripts/RegFormValidate.js"></script>
+    @*<script src="~/Scripts/RegFormValidate.js"></script>*@
 
     @*//calender*@
     <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
@@ -71,12 +71,16 @@
         <nav>
             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
-                <a class="nav-item nav-link" id="nav-Create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>
+                @*<a class="nav-item nav-link" id="nav-Create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>*@
                 <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">ListView</a>
-                @*<a class="nav-item nav-link" id="nav-calenderView-tab" data-toggle="tab" href="#nav-calenderView" role="tab" aria-controls="nav-calenderView" aria-selected="false">CalenderView</a>*@
             </div>
         </nav>
         <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
+
+            <div id="divBtnCreate">
+                <button id="btnCreateEvent" type="button">Create</button>
+            </div>
+
             @*Home*@
             <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
                 <div id="calender"></div>
@@ -157,7 +161,7 @@
 
 
             @*create*@
-            <div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
+            @*<div class="tab-pane fade" id="nav-create" role="tabpanel" aria-labelledby="nav-create-tab">
 
                 <div class="container register-form" id="createForm">
                     <form name="CreateForm" method=post>
@@ -209,7 +213,8 @@
                         </div>
                     </form>
                 </div>
-            </div>@*create--end*@
+            </div>*@
+            @*create--end*@
 
 
             @*listView*@
@@ -285,7 +290,7 @@
                             <input type="password" id="user-pass" class="form-control" placeholder="Password" name="Password" required autofocus="">
                             <input type="password" id="user-repeatpass" class="form-control" placeholder="Confirm Password" name="RePassword" required autofocus="">
                             <div class="input-group">
-                                <button class="btn btn-md btn-block submit" id="btn-SignUp" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
+                                <button class="btn btn-md btn-block submit" id="btn-SignUp" type="button"><i class="fas fa-user-plus"></i> Sign Up</button>
                             </div>
                             <a href="#" id="cancel_signup"><i class="fa fa-angle-left"></i> Back</a>
                         </form>
@@ -391,6 +396,73 @@
             </div>
         </div>
     </div>@*end---User details modal popup*@
+
+    @*Create event popup*@
+    <div class="modal" id="createEventModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Create Event</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="container register-form" id="createForm">
+                        <form name="CreateForm" method=post>
+
+                            <div class="form-content">
+
+                                <input type="hidden" class="form-control" name="UserId" id="UserId" />
+                                <input type="hidden" class="form-control" name="EventId" id="EventId" />
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>Event Name:</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control" placeholder="Event Name" name="EventName" id="EventName" required />
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>Description:</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <textarea class="form-control" cols="40" rows="5" placeholder="Description" name="Description" id="Description"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>Start Date:</label>
+                                    </div>
+
+                                    <div class="col-md-9">
+                                        <input type="datetime-local" class="form-control" placeholder="DD-MM-YYYY HH:mm a" name="StartDate" id="StartDate" required />
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label>End Date:</label>
+                                    </div>
+
+                                    <div class="col-md-9">
+                                        <input type="datetime-local" class="form-control" placeholder="DD-MM-YYYY HH:mm a" name="EndDate" id="EndDate" required />
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btnSubmit" id="btnSubmitCreate">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div> @*end--Create event popup*@
 
     <div class="footer">
         <p>Copyright &copy; 2020 Lekshmi Raj M R</p>
