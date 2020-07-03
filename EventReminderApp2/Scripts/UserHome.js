@@ -5,8 +5,7 @@
     var VALIDURL = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=';
     var SCOPE = 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
     var CLIENTID = '718508958029-49a98067qtqp248e6h0fv752tg4u076d.apps.googleusercontent.com';
-    var REDIRECT = 'http://localhost:60256/User/UserHome';
-    var LOGOUT = 'http://localhost:60256/User/UserHome';
+    var REDIRECT = 'http://localhost:60256/User/UserHome';   
     var TYPE = 'token';
     var _url = OAUTHURL + 'scope=' + SCOPE + '&client_id=' + CLIENTID + '&redirect_uri=' + REDIRECT + '&response_type=' + TYPE;
     var acToken;    
@@ -59,6 +58,7 @@
                     $('#tab').css('display', 'block');
                     $(btnSignInSignUp).css('display', 'none');
                     $(btnSignOut).css('display', 'inline-block');
+                    $('#welcome').css('display', 'inline-block');
                     //Refresh the calender
                     FetchEventAndRenderCalendar();
                     showList();
@@ -74,37 +74,57 @@
 
 
     ///register///
-    $('#btn-SignUp').click(function () {
-        var isValid = true;
+    $('#btn-SignUp').click(function () {       
         if ($('#user-name').val() == "") {
-            alert("User name is required");
-            //isValid = false;
+            alert("User name is required");            
             return;
         }
 
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!$('#user-email').val().match(mailformat)) {
             alert("You have entered an invalid email address!");
-            document.getElementById("user-email").focus();
-            //isValid = false;
+            document.getElementById("user-email").focus();            
             return;
         }
        
         if (!$('#user-pass').val().match($('#user-repeatpass').val())) {
             alert("Password does not match");
-            document.getElementById("user-repeatpass").focus();
-           // isValid = false;
+            document.getElementById("user-repeatpass").focus();           
             return;
-        }        
+        } 
 
-       // if (isValid) {
+        var no = $('#user-phone').val();
+
+        if (no != null) {
+            var numbers = /^[0-9]+$/;
+            if (no.match(numbers)) {
+                if (no.length > 10 || no.length < 10) {
+                    alert('Invalid phone number');
+                    document.getElementById("user-phone").focus();
+                    return;
+                }
+            }
+            else {
+                alert('Invalid phone number');
+                document.getElementById("user-phone").focus();
+                return;
+            }       
+        }
             var RegData = {
                 UserName: $('#user-name').val(),
                 Email: $('#user-email').val(),
-                Password: $('#user-pass').val()
+                Password: $('#user-pass').val(),
+                DOB: $('#user-dob').val(),
+                Phone: $('#user-phone').val()
             }
-            Register(RegData);
-       // } 
+        //clearing form values
+        $('#user-name').val("");
+        $('#user-email').val("");
+        $('#user-pass').val("");
+        $('#user-repeatpass').val("");
+        $('#user-dob').val("");
+        $('#user-phone').val("");
+        Register(RegData);        
     });
 
     function Register(data) {
@@ -156,7 +176,7 @@
     function GenerateCalender(events) {
         $('#calender').fullCalendar('destroy');
         $('#calender').fullCalendar({
-            contentHeight: 400,
+            contentHeight: 470,
             defaultDate: new Date(),
             timeFormat: 'h(:mm)a',
             header: {
@@ -235,7 +255,7 @@
             var startDate = moment($('#StartDate').val(), "DD-MM-YYYY HH:mm a").toDate();
             var endDate = moment($('#EndDate').val(), "DD-MM-YYYY HH:mm a").toDate();
             if (startDate > endDate) {
-                alert('Invalid end date');
+                alert('Start date should not be greater than end date');
                 return;
             }
         }
@@ -245,7 +265,7 @@
             EventName: $('#EventName').val().trim(),
             Description: $('#Description').val(),
             StartDate: $('#StartDate').val(),
-            EndDate: $('#StartDate').val()                       
+            EndDate: $('#EndDate').val()                       
         }       
         //clearing form values
         $('#EventID').val("");
@@ -366,7 +386,7 @@
             var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
             var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
             if (startDate > endDate) {
-                alert('Invalid end date');
+                alert('Start date should not be greater than end date');
                 return;
             }
         }
@@ -444,6 +464,7 @@
         $('#tab').css('display', 'none');
         $(btnSignOut).css('display', 'none');
         $(btnSignInSignUp).css('display', 'inline-block');
+        $('#welcome').css('display', 'none');
         $('#inputEmail').val("");  
         $('#inputPassword').val("");
         $("#currentUser").empty();
@@ -497,7 +518,7 @@
             var startDate = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
             var endDate = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
             if (startDate > endDate) {
-                alert('Invalid end date');
+                alert('Start date should not be greater than end date');
                 return;
             }
         }
@@ -653,7 +674,17 @@
     
 
     //////facebook authentication
-   
+
+
+    // Load the JavaScript SDK asynchronously
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
     $('#btnFacebookLogin').click(function () {
         userType = 'facebook';
         fbLogin();
@@ -676,18 +707,7 @@
             }
         });
     };
-
-
-    // Load the JavaScript SDK asynchronously
-    (function (d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-
-
+    
     // Facebook login with JavaScript SDK
     function fbLogin() {
         FB.login(function (response) {
@@ -742,6 +762,8 @@
                 $('#uId').val(regUser.UserId);
                 $('#uName').val(regUser.UserName);
                 $('#uEmail').val(regUser.Email);
+                $('#uDOB').val(regUser.DobString);
+                $('#uPhone').val(regUser.Phone);
                 $('#ModalUserDetails').modal(); 
             },
             error: function (a, b, c) {
@@ -771,11 +793,31 @@
             return;            
             }
         }
+
+        var no = $('#uPhone').val();
+
+        if (no != null) {
+            var numbers = /^[0-9]+$/;
+            if (no.match(numbers)) {
+                if (no.length > 10 || no.length < 10) {
+                    alert('Invalid phone number');
+                    document.getElementById("user-phone").focus();
+                    return;
+                }
+            }
+            else {
+                alert('Invalid phone number');
+                document.getElementById("user-phone").focus();
+                return;
+            }
+        }
         
         var userData = {
             UserId: $('#uId').val(),
             UserName: $('#uName').val().trim(),
-            Email: $('#uEmail').val()            
+            Email: $('#uEmail').val(),
+            DOB: $('#uDOB').val(),
+            Phone: $('#uPhone').val()
         }
         UpdateUser(userData);
 

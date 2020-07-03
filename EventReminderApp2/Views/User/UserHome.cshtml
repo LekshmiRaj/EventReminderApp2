@@ -50,16 +50,18 @@
         <input type="hidden" class="form-control" id="SessionUserName" value="@ViewBag.USERNAME" />
     }
 
-    <div class="header">
-        <label id="currentUser"></label>
-        <div class="pContainer">
-            <p>Event Reminder</p>
+        <div class="header">
+            @*<label id="currentUser"></label>*@
+            <label id="welcome" style="color: #cfe422;display:none">Welcome</label>
+            <a id="currentUser" href="#" style="color: #ffe315"></a>
+            <div class="pContainer">
+                <p>Event Reminder</p>
+            </div>
+            <div class="btnContainer">
+                <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
+                <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">Sign Out</button>
+            </div>
         </div>
-        <div class="btnContainer">
-            <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
-            <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">SignOut</button>
-        </div>
-    </div>
 
     @*background*@
     <div id="backgroundImg">
@@ -72,7 +74,7 @@
             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
                 <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
                 @*<a class="nav-item nav-link" id="nav-Create-tab" data-toggle="tab" href="#nav-create" role="tab" aria-controls="nav-create" aria-selected="false">create</a>*@
-                <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">ListView</a>
+                <a class="nav-item nav-link" id="nav-listView-tab" data-toggle="tab" href="#nav-listView" role="tab" aria-controls="nav-listView" aria-selected="false">List View</a>
             </div>
         </nav>
         <div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
@@ -285,7 +287,9 @@
 
 
                         <form class="form-signup">
-                            <input type="text" id="user-name" class="form-control" placeholder="Username" name="UserName" required autofocus="">
+                            <input type="text" id="user-name" class="form-control" placeholder="User name" name="UserName" required autofocus="">
+                            <input type="text" id="user-dob" class="form-control" placeholder="Date of birth" name="DOB" onfocus="(this.type='date')" onblur="(this.type='text')" autofocus="">
+                            <input type="text" id="user-phone" class="form-control" placeholder="Phone number" name="Phone" autofocus="">
                             <input type="email" id="user-email" class="form-control" placeholder="Email address" name="Email" required autofocus="">
                             <input type="password" id="user-pass" class="form-control" placeholder="Password" name="Password" required autofocus="">
                             <input type="password" id="user-repeatpass" class="form-control" placeholder="Confirm Password" name="RePassword" required autofocus="">
@@ -387,6 +391,14 @@
                         <div class="form-group">
                             <label>Email:</label>
                             <input type="email" id="uEmail" class="form-control" placeholder="Email address" name="uEmail" required autofocus="">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of birth:</label>
+                            <input type="text" id="uDOB" class="form-control" placeholder="DD-MM-YYYY" name="uDOB" autofocus="">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone number:</label>
+                            <input type="text" id="uPhone" class="form-control" placeholder="Phone number" name="uPhone" autofocus="">
                         </div>
                         <div class="input-group">
                             <button type="button" class="btn btn-md btn-block submit" id="btnEditUserDetails">Update</button>

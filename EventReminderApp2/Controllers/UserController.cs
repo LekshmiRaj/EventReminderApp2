@@ -49,8 +49,9 @@ namespace EventReminderApp2.Controllers
         public ActionResult SignUp(Registration registration)
         {
             var status = false;
-            string query = "insert into tblRegistration(UserName,Email,Password)" +
-                    " values('" + registration.UserName + "','" + registration.Email + "','" + registration.Password + "')";
+            var dob = registration.DOB.ToString("yyyy-MM-dd");                        
+            string query = "insert into tblRegistration(UserName,Email,Password,DOB,Phone)" +
+                    " values('" + registration.UserName + "','" + registration.Email + "','" + registration.Password + "','" + dob + "','" + registration.Phone + "')";
             int count = eventRepository.AddUpdateDeleteSQL(query);
             
             if(count == 1)
@@ -91,8 +92,13 @@ namespace EventReminderApp2.Controllers
 
         [HttpPost]
         public JsonResult SaveEvent(EventModel eventModel)
-        {           
-            string userid = Session["userid"].ToString();
+        {
+            string userid = null;
+            if (Session["userid"] != null)
+            {
+                userid = Session["userid"].ToString();
+            }
+           
             eventRepository.AddEditEvent(eventModel, userid);            
             var status = true;            
             return new JsonResult { Data = new { status = status } };
@@ -106,6 +112,7 @@ namespace EventReminderApp2.Controllers
             {
                 userid = Session["userid"].ToString();
             }
+            
             List<EventModel> eventList = eventRepository.ListEvents(userid);
 
             return new JsonResult { Data = eventList, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
@@ -249,13 +256,14 @@ namespace EventReminderApp2.Controllers
             logFormat = DateTime.Now.ToLongDateString().ToString() + " - " +
                 DateTime.Now.ToLongTimeString().ToString() + " ==> ";
 
-            System.IO.File.AppendAllText(logPath + "\\" + "LogFile.txt", logFormat +" " +toEmail + "Reason- " + e+ Environment.NewLine);
+            System.IO.File.AppendAllText(logPath + "\\" + "LogFile.txt", logFormat +" " +toEmail +" "+ "Reason- " + e+ Environment.NewLine);
                   
             return;
         }
 
         public void SendResetPasswordLinkEmail(string toEmail, string activationCode)
         {
+            try {
             var verifyUrl = "/User/ResetPassword/" + activationCode;
             var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, verifyUrl);
             var subject = "Reset Password";
@@ -276,6 +284,13 @@ namespace EventReminderApp2.Controllers
                 mailMessage.BodyEncoding = UTF8Encoding.UTF8;
                 client.Send(mailMessage);
                 return;
+            }
+            catch (Exception ex)
+            {
+                string e = ex.ToString();
+                writeLogFile(toEmail, e);
+                return;
+            }
         }
 
         [HttpPost]
@@ -351,10 +366,11 @@ namespace EventReminderApp2.Controllers
 
         [HttpPost]
         public ActionResult UpdateUserDetails(Registration registration)
-        {
+        {            
             var status = false;
+            var dob = registration.DOB.ToString("yyyy-MM-dd");
             string query = "update tblRegistration set UserName = '" + registration.UserName +
-                    "', Email= '" + registration.Email + "' where UserId=" + registration.UserId;
+                    "', Email= '" + registration.Email + "', DOB= '" + dob + "', Phone= '" + registration.Phone + "' where UserId=" + registration.UserId;
             int count = eventRepository.AddUpdateDeleteSQL(query);
 
             if (count == 1)

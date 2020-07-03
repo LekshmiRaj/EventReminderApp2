@@ -180,15 +180,19 @@ namespace EventReminderApp2
         public Registration Get_User(string qry)
         {            
             DataRow row = GetSQLList(qry).Rows[0];
+            Registration registration = new Registration();
+            //return new Registration
+            //{               
+            registration.UserId = Convert.ToInt32(row["UserId"]);
+            registration.UserName = row["UserName"].ToString();
+            registration.Email = row["Email"].ToString();
+            registration.Password = row["Password"].ToString();
+            registration.ResetPasswordCode = row["ResetPasswordCode"].ToString();
+            registration.DOB = Convert.ToDateTime(string.IsNullOrEmpty(row["DOB"].ToString())? DateTime.Now.ToString(): row["DOB"].ToString());
+            registration.Phone = ((row["Phone"]) ?? "").ToString();
+            //};
 
-            return new Registration
-            {               
-                UserId = Convert.ToInt32(row["UserId"]),
-                UserName = row["UserName"].ToString(),
-                Email = row["Email"].ToString(), 
-                Password= row["Password"].ToString(),
-                ResetPasswordCode = row["ResetPasswordCode"].ToString()
-            };
+            return registration;
         }
     }
 }

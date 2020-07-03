@@ -55,7 +55,7 @@
 }
 
 #btnCreateEvent {
-    margin-left: 20px;
+    margin-left: 35px;
     margin-bottom:15px;
     border: none;
     border-radius: 1.5rem;
@@ -64,4 +64,13 @@
     cursor: pointer;
     background: orange;
     color: #fff;
+}
+
+#calender {
+    width: 95%;
+    margin-left: 35px;
+}
+
+#welcome {
+    float: left;    
 }
