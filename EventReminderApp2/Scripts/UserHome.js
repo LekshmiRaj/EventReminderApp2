@@ -25,6 +25,7 @@
         $('#tab').css('display', 'block');
         $(btnSignInSignUp).css('display', 'none');
         $(btnSignOut).css('display', 'inline-block');
+        $('#welcome').css('display', 'inline-block');
         FetchEventAndRenderCalendar();
         showList();
         $('#currentUser').text($('#SessionUserName').val());
@@ -364,7 +365,7 @@
         //Validation/
 
         var date1 = $('#txtStart').val();
-        var date2 = $('#txtEnd').val();       
+        var date2 = $('#txtEnd').val();   
 
         if ($('#txtSubject').val().trim() == "") {
             alert('Subject required');
@@ -381,7 +382,7 @@
                 return;
             }
         }
-
+        
         else {
             var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
             var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
@@ -641,6 +642,7 @@
             success: function (resp) {
                 user = resp;
                 $('#currentUser').text(user.name);
+                $('#welcome').css('display', 'inline-block');
                 getAccountDetails(user);
                 console.log(user);
             }
@@ -726,6 +728,7 @@
                 console.log(response);
                 fbUser = response;                
                 $('#currentUser').text(fbUser.first_name);
+                $('#welcome').css('display', 'inline-block');
                 StoreAccountDetails(fbUser);
             });
     }
