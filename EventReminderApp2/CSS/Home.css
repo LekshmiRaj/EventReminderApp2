@@ -52,15 +52,15 @@
     float: left;
     margin-left: 5px;
     width: auto;
+    text-transform: capitalize;
 }
 
 #btnCreateEvent {
     margin-left: 35px;
     margin-bottom:15px;
     border: none;
-    border-radius: 1.5rem;
-    padding: .2%;
-    width: 5%;
+    border-radius: 1.5rem;   
+    width: 75px;
     cursor: pointer;
     background: orange;
     color: #fff;
@@ -74,3 +74,49 @@
 #welcome {
     float: left;    
 }
+
+#appName {
+    font-size: 20px;
+}
+
+.required:after {
+    content: " *";
+    color: red;
+}
+
+#createEventModal label, #ModalListUpdate label{
+    width: 90px;
+}
+
+/*#user-name::-input-placeholder:after {
+content: "*";
+color: red;
+font-size: 1.15em;
+}*/
+
+
+#user-name::after {
+    content: "*";
+    color: red;
+    font-size: 1.15em;
+}
+
+#user-name::-webkit-input-placeholder:after {
+    content: "*";
+    color: red;
+    font-size: 1.15em;
+}
+
+#user-name::-moz-placeholder:after {
+    content: "*";
+    color: red;
+    font-size: 1.15em;
+ }
+
+  #user-name:-ms-input-placeholder:after {
+   content:"*";
+  color: red;
+   font-size: 1.15em;
+} 
+ 
+

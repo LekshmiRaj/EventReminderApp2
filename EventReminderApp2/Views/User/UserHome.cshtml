@@ -22,8 +22,7 @@
     <link href="~/CSS/NavTabss.css" rel="stylesheet" />
     <script src="~/Scripts/LoginReg.js"></script>
     <link href="~/CSS/LoginReg.css" rel="stylesheet" />
-    @*<script src="~/Scripts/RegFormValidate.js"></script>*@
-
+    
     @*//calender*@
     <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print" />
@@ -50,15 +49,14 @@
         <input type="hidden" class="form-control" id="SessionUserName" value="@ViewBag.USERNAME" />
     }
 
-        <div class="header">
-            @*<label id="currentUser"></label>*@
-            <label id="welcome" style="color: #cfe422;display:none">Welcome</label>
-            <a id="currentUser" href="#" style="color: #ffe315"></a>
+        <div class="header">            
+            <label id="welcome" style="color: orange;display:none">Welcome</label>
+            <a id="currentUser" href="#" style="color: orange"></a>
             <div class="pContainer">
-                <p>Event Reminder</p>
+                <p id="appName">Event Reminder</p>
             </div>
             <div class="btnContainer">
-                <button id="btnSignInSignUp" class="btn btn-danger btn-large">SignIn or SignUp</button>
+                <button id="btnSignInSignUp" class="btn btn-danger btn-large">Sign-In or Sign-Up</button>
                 <button id="btnSignOut" class="btn btn-danger btn-large" style="display:none">Sign Out</button>
             </div>
         </div>
@@ -130,17 +128,17 @@
                                 <form class="col-md-12 form-horizontal">
                                     <input type="hidden" id="hdEventID" value="0" />
                                     <div class="form-group">
-                                        <label>Subject</label>
+                                        <label class="required">Subject</label>
                                         <input type="text" id="txtSubject" class="form-control" />
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Start</label>
+                                        <label class="required">Start</label>
                                         <input type="text" id="txtStart" class="form-control" />
                                     </div>
 
                                     <div class="form-group" id="divEndDate">
-                                        <label>End</label>
+                                        <label class="required">End</label>
                                         <input type="text" id="txtEnd" class="form-control" />
                                     </div>
 
@@ -226,12 +224,12 @@
                     <table class="table" id="tblEventList">
                         <thead>
                             <tr>
-                                <th>No.</th>
-                                <th> EventId</th>
-                                <th>EventName</th>
+                                <th>Sl.No.</th>
+                                <th> Event Id</th>
+                                <th>Subject</th>
                                 <th>Description</th>
-                                <th>StartDate</th>
-                                <th>EndDate</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -290,9 +288,9 @@
                             <input type="text" id="user-name" class="form-control" placeholder="User name" name="UserName" required autofocus="">
                             <input type="text" id="user-dob" class="form-control" placeholder="Date of birth" name="DOB" onfocus="(this.type='date')" onblur="(this.type='text')" autofocus="">
                             <input type="text" id="user-phone" class="form-control" placeholder="Phone number" name="Phone" autofocus="">
-                            <input type="email" id="user-email" class="form-control" placeholder="Email address" name="Email" required autofocus="">
-                            <input type="password" id="user-pass" class="form-control" placeholder="Password" name="Password" required autofocus="">
-                            <input type="password" id="user-repeatpass" class="form-control" placeholder="Confirm Password" name="RePassword" required autofocus="">
+                            <input type="email" id="user-email" class="form-control" placeholder="Email address *" name="Email" required autofocus="">
+                            <input type="password" id="user-pass" class="form-control" placeholder="Password *" name="Password" required autofocus="">
+                            <input type="password" id="user-repeatpass" class="form-control" placeholder="Confirm Password *" name="RePassword" required autofocus="">
                             <div class="input-group">
                                 <button class="btn btn-md btn-block submit" id="btn-SignUp" type="button"><i class="fas fa-user-plus"></i> Sign Up</button>
                             </div>
@@ -326,10 +324,10 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-3">
-                                        <label>Event Name:</label>
+                                        <label class="required">Subject:</label>
                                     </div>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="Event Name" name="EventNameList" id="EventNameList" required />
+                                        <input type="text" class="form-control" placeholder="Subject" name="EventNameList" id="EventNameList" required />
                                     </div>
                                 </div>
 
@@ -344,7 +342,7 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-3">
-                                        <label>Start Date:</label>
+                                        <label class="required">Start Date:</label>
                                     </div>
 
                                     <div class="col-md-9">
@@ -354,7 +352,7 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-3">
-                                        <label>End Date:</label>
+                                        <label class="required">End Date:</label>
                                     </div>
 
                                     <div class="col-md-9">
@@ -430,10 +428,10 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-3">
-                                        <label>Event Name:</label>
+                                        <label class="required">Subject:</label>
                                     </div>
                                     <div class="col-md-9">
-                                        <input type="text" class="form-control" placeholder="Event Name" name="EventName" id="EventName" required />
+                                        <input type="text" class="form-control" placeholder="Subject" name="EventName" id="EventName" required />
                                     </div>
                                 </div>
 
@@ -448,7 +446,7 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-3">
-                                        <label>Start Date:</label>
+                                        <label class="required">Start Date:</label>
                                     </div>
 
                                     <div class="col-md-9">
@@ -458,7 +456,7 @@
 
                                 <div class="row form-group">
                                     <div class="col-md-3">
-                                        <label>End Date:</label>
+                                        <label class="required">End Date:</label>
                                     </div>
 
                                     <div class="col-md-9">

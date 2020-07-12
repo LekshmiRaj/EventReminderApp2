@@ -74,43 +74,66 @@
     }
 
 
-    ///register///
-    $('#btn-SignUp').click(function () {       
+    function registerValidation() {
+
+        var isValid = true;
+
         if ($('#user-name').val() == "") {
-            alert("User name is required");            
-            return;
+            alert("User name is required");
+            isValid = false;
         }
 
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!$('#user-email').val().match(mailformat)) {
             alert("You have entered an invalid email address!");
-            document.getElementById("user-email").focus();            
-            return;
+            document.getElementById("user-email").focus();
+            isValid = false;
         }
-       
-        if (!$('#user-pass').val().match($('#user-repeatpass').val())) {
-            alert("Password does not match");
-            document.getElementById("user-repeatpass").focus();           
-            return;
-        } 
 
         var no = $('#user-phone').val();
 
-        if (no != null) {
+        if (!no == "") {
             var numbers = /^[0-9]+$/;
             if (no.match(numbers)) {
                 if (no.length > 10 || no.length < 10) {
                     alert('Invalid phone number');
                     document.getElementById("user-phone").focus();
-                    return;
+                    isValid = false;
                 }
             }
             else {
                 alert('Invalid phone number');
                 document.getElementById("user-phone").focus();
-                return;
-            }       
+                isValid = false;
+            }
         }
+
+        if ($('#user-pass').val() == "") {
+            alert("Password is required");
+            isValid = false;
+        }
+        if ($('#user-repeatpass').val() == "") {
+            alert("Confirm password is required");
+            isValid = false;
+        }
+        //if (!$('#user-pass').val().match($('#user-repeatpass').val()) && !$('#user-pass').val().match($('#user-repeatpass').val())) {
+        //    alert("Password does not match");
+        //    document.getElementById("user-repeatpass").focus();
+        //    isValid = false;
+        //}
+
+        if ($('#user-pass').val()!=$('#user-repeatpass').val()) {
+            alert("Password does not match");
+            document.getElementById("user-repeatpass").focus();
+            isValid = false;
+        }
+       
+        return isValid;
+    }
+    ///register///
+    $('#btn-SignUp').click(function () {       
+
+        if (registerValidation()) { 
             var RegData = {
                 UserName: $('#user-name').val(),
                 Email: $('#user-email').val(),
@@ -125,7 +148,8 @@
         $('#user-repeatpass').val("");
         $('#user-dob').val("");
         $('#user-phone').val("");
-        Register(RegData);        
+            Register(RegData);
+        }         
     });
 
     function Register(data) {
@@ -192,11 +216,11 @@
                 selectedEvent = calEvent;
                 $('#myModal #eventTitle').text(calEvent.title);
                 var $description = $('<div/>');
-                $description.append($('<p/>').html('<b>Start:</b>' + calEvent.start.format("DD-MM-YYYY HH:mm a")));
+                $description.append($('<p/>').html('<b>Start: </b>' + calEvent.start.format("DD-MM-YYYY HH:mm a")));
                 if (calEvent.end != null) {
-                    $description.append($('<p/>').html('<b>End:</b>' + calEvent.end.format("DD-MM-YYYY HH:mm a")));
+                    $description.append($('<p/>').html('<b>End: </b>' + calEvent.end.format("DD-MM-YYYY HH:mm a")));
                 }
-                $description.append($('<p/>').html('<b>Description:</b>' + calEvent.description));
+                $description.append($('<p/>').html('<b>Description: </b>' + calEvent.description));
                 $('#myModal #pDetails').empty().html($description);
 
                 $('#myModal').modal();
@@ -231,8 +255,7 @@
 
     ////create event////       
     $('#btnSubmitCreate').click(function () {
-        //Validation/
-
+        //Validation/        
         var date1 = $('#StartDate').val();
         var date2 = $('#EndDate').val();        
 
@@ -251,16 +274,20 @@
               return;
           }
         }
-            
-        else {
-            var startDate = moment($('#StartDate').val(), "DD-MM-YYYY HH:mm a").toDate();
-            var endDate = moment($('#EndDate').val(), "DD-MM-YYYY HH:mm a").toDate();
-            if (startDate > endDate) {
+                    
+        if (new Date(date1) > new Date(date2)){
                 alert('Start date should not be greater than end date');
                 return;
-            }
         }
-              
+                   
+            var selectedDate = new Date(date1);
+            var now = new Date();
+            if (selectedDate < now) {
+                if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
+                    return;
+                }
+            }
+                     
         var data = {
             EventId: $('#EventID').val(),
             EventName: $('#EventName').val().trim(),
@@ -274,8 +301,8 @@
         $('#Description').val("");
         $('#StartDate').val("");
         $('#EndDate').val("");
-      
-        CreateEvent(data);
+        
+        CreateEvent(data);        
     })
     
 
@@ -365,7 +392,14 @@
         //Validation/
 
         var date1 = $('#txtStart').val();
-        var date2 = $('#txtEnd').val();   
+        var date2 = $('#txtEnd').val();  
+
+        var d1 = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").isValid();
+        var d2 = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").isValid();
+        if (d1 == false || d2 == false) {
+            alert("Incorrect start or end date");
+            return;
+        }
 
         if ($('#txtSubject').val().trim() == "") {
             alert('Subject required');
@@ -382,15 +416,29 @@
                 return;
             }
         }
+
+        if (new Date(date1) > new Date(date2)) {
+            alert('Start date should not be greater than end date');
+            return;
+        }
         
-        else {
-            var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
-            var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
-            if (startDate > endDate) {
-                alert('Start date should not be greater than end date');
+        //else {
+        //    var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
+        //    var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
+        //    if (startDate > endDate) {
+        //        alert('Start date should not be greater than end date');
+        //        return;
+        //    }
+        //}
+
+        var selectedDate = new Date(date1);
+        var now = new Date();
+        if (selectedDate < now) {
+            if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
                 return;
             }
         }
+
         var data = {
             EventId: $('#hdEventID').val(),
             EventName: $('#txtSubject').val().trim(),
@@ -410,7 +458,7 @@
             success: function (data) {
                 $.each(data, function (i, item) {
                        var rows = "<tr id=" + item.EventId +">"
-                        + "<td>" + i + "</td>"
+                           + "<td>" + ++i + "</td>"
                         + "<td>" + item.EventId + "</td>"
                         + "<td>" + item.EventName + "</td>"
                         + "<td>" + item.Description + "</td>"
@@ -429,7 +477,7 @@
 
                 $("#tblEventList tbody .deleteRow").click(function () {                    
                     var eventId = $(this).closest('tr').attr("id");
-                    var confirmDelete = confirm('are you sure you want to delete this?');
+                    var confirmDelete = confirm('Are you sure you want to delete this?');
                     if (confirmDelete == true) {
                         $.ajax(
                             {
@@ -452,7 +500,7 @@
                 });
             },
             error: function (error) {
-                alert('failed');
+                alert('Failed');
             }
         });
     }
@@ -460,19 +508,22 @@
           
     //signOut
     $('#btnSignOut').click(function () {       
-        ClearSession();
-        $('#backgroundImg').css('display', 'block');
-        $('#tab').css('display', 'none');
-        $(btnSignOut).css('display', 'none');
-        $(btnSignInSignUp).css('display', 'inline-block');
-        $('#welcome').css('display', 'none');
-        $('#inputEmail').val("");  
-        $('#inputPassword').val("");
-        $("#currentUser").empty();
-        if (userType == 'facebook') {
-          FB.logout(function (response) {
-              console.log('facebook logout');
-          });
+
+        if (confirm('Are you sure you want to log out?')) {
+            ClearSession();
+            $('#backgroundImg').css('display', 'block');
+            $('#tab').css('display', 'none');
+            $(btnSignOut).css('display', 'none');
+            $(btnSignInSignUp).css('display', 'inline-block');
+            $('#welcome').css('display', 'none');
+            $('#inputEmail').val("");
+            $('#inputPassword').val("");
+            $("#currentUser").empty();
+            if (userType == 'facebook') {
+                FB.logout(function (response) {
+                    console.log('facebook logout');
+                });
+            }
         }
     });
 
@@ -483,7 +534,7 @@
             success: function (data) {                                
             },
             error: function (error) {
-                alert('failed');
+                alert('Failed');
             }
         });
     }
@@ -496,8 +547,15 @@
         save = "UpdateEve";
 
         var date1 = $('#StartDateList').val();
-        var date2 = $('#EndDateList').val();   
-
+        var date2 = $('#EndDateList').val();  
+                
+        var d1 = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm a").isValid();
+        var d2 = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm a").isValid();
+        if (d1 == false || d2 == false) {
+            alert("Invalid start or end date");
+            return;
+        }
+        
         //Validation/
         if ($('#EventNameList').val().trim() == "") {
             alert('Subject required');
@@ -523,6 +581,15 @@
                 return;
             }
         }
+
+        var selectedDate = new Date(date1);
+        var now = new Date();
+        if (selectedDate < now) {
+            if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
+                return;
+            }
+        }
+
         var data = {
             EventId: $('#EventIdList').val(),
             EventName: $('#EventNameList').val().trim(),
