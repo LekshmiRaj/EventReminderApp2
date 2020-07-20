@@ -65,17 +65,21 @@ namespace EventReminderApp2.Controllers
         [HttpPost]
         public JsonResult SignIn(Registration login)
         {
+            string uId;
+            string uEmail;
+            string uname;
+
             var status = false;
             
             string query = $"Select UserId,Email,Password,UserName from [dbo].[tblRegistration] where Email='{login.Email}' and Password='{login.Password}'";
             List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
-
-            string uId = sessionVariables[0];
-            string uEmail = sessionVariables[1];
-            string uname = sessionVariables[2];
-
-            if (sessionVariables != null)
+            
+            if (sessionVariables.Count != 0)
             {
+                uId = sessionVariables[0];
+                uEmail = sessionVariables[1];
+                uname = sessionVariables[2];
+
                 Session["userid"] = uId;
                 Session["email"] = uEmail;
                 Session["username"] = uname;
@@ -147,27 +151,40 @@ namespace EventReminderApp2.Controllers
         public JsonResult GoogleLogin(string email, string name, string gender, string lastname, string location)
         {
             string qry;
+            string query;
+            List<string> sessionVariables;
             var status = false;
-            string query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
+            query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
 
-            List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
-
+            sessionVariables = eventRepository.GetUserLoginDetails(query);
+            if(sessionVariables.Count != 0) { 
             string uId = sessionVariables[0];
             string uEmail = sessionVariables[1];
             string uname = sessionVariables[2];
 
-            if (sessionVariables != null)
-            {
-                Session["userid"] = uId;
-                Session["email"] = uEmail;
-                Session["username"] = uname;
-                status = true;
-            }
+             Session["userid"] = uId;
+             Session["email"] = uEmail;
+             Session["username"] = uname;
+             status = true;
+            }           
             else
             {
                 qry = "insert into tblRegistration(UserName,Email)" +
                     " values('" + name + "','" + email + "')";
                 eventRepository.AddUpdateDeleteSQL(qry);
+                query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
+
+                sessionVariables = eventRepository.GetUserLoginDetails(query);
+                if (sessionVariables.Count != 0)
+                {
+                    string uId = sessionVariables[0];
+                    string uEmail = sessionVariables[1];
+                    string uname = sessionVariables[2];
+
+                    Session["userid"] = uId;
+                    Session["email"] = uEmail;
+                    Session["username"] = uname;                   
+                }
                 status = true;
             }
            
@@ -178,17 +195,20 @@ namespace EventReminderApp2.Controllers
         public JsonResult FacebookLogin(string email, string name)
         {
             string qry;
+            string query;
+            List<string> sessionVariables;
+
             var status = false;
-            string query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
+            query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
 
-            List<string> sessionVariables = eventRepository.GetUserLoginDetails(query);
-
-            string uId = sessionVariables[0];
-            string uEmail = sessionVariables[1];
-            string uname = sessionVariables[2];
-
-            if (sessionVariables != null)
+            sessionVariables = eventRepository.GetUserLoginDetails(query);
+            
+            if (sessionVariables.Count != 0)
             {
+                string uId = sessionVariables[0];
+                string uEmail = sessionVariables[1];
+                string uname = sessionVariables[2];
+
                 Session["userid"] = uId;
                 Session["email"] = uEmail;
                 Session["username"] = uname;
@@ -198,7 +218,21 @@ namespace EventReminderApp2.Controllers
             {
                 qry = "insert into tblRegistration(UserName,Email)" +
                       " values('" + name + "','" + email + "')";
-                eventRepository.AddUpdateDeleteSQL(qry);
+                eventRepository.AddUpdateDeleteSQL(qry);               
+                query = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}' ";
+
+                sessionVariables = eventRepository.GetUserLoginDetails(query);
+
+                if (sessionVariables.Count != 0)
+                {
+                    string uId = sessionVariables[0];
+                    string uEmail = sessionVariables[1];
+                    string uname = sessionVariables[2];
+
+                    Session["userid"] = uId;
+                    Session["email"] = uEmail;
+                    Session["username"] = uname;                    
+                }
                 status = true;
             }
             
@@ -311,6 +345,7 @@ namespace EventReminderApp2.Controllers
             }
             else
             {
+                status = false;
                 return new JsonResult { Data = new { status = status } };
             }
                                               
@@ -341,7 +376,8 @@ namespace EventReminderApp2.Controllers
             {
                 string query= "update tblRegistration set Password = '" + resetPasswordModel.NewPassword + "' where ResetPasswordCode ='" + resetPasswordModel.ResetCode+"'";
                 eventRepository.AddUpdateDeleteSQL(query);
-                string query2= "update tblRegistration set ResetPasswordCode = '" + "" + "' where ResetPasswordCode ='" + resetPasswordModel.ResetCode+"'";
+                string query2 = "update tblRegistration set ResetPasswordCode = '' where UserId ='" + user.UserId + "'";
+                //eventRepository.AddUpdateDeleteSQL(query2);               
                 ViewBag.Message = "New password updated successfully";
             }
             else

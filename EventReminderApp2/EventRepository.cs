@@ -151,7 +151,7 @@ namespace EventReminderApp2
         public bool verifyEmail(string qry)
         {
             DataTable datatable = GetSQLList(qry);
-            if (datatable != null)
+            if (datatable.Rows.Count > 0)
             {
                 return true;
             }
@@ -181,17 +181,16 @@ namespace EventReminderApp2
         {            
             DataRow row = GetSQLList(qry).Rows[0];
             Registration registration = new Registration();
-            //return new Registration
-            //{               
+                           
             registration.UserId = Convert.ToInt32(row["UserId"]);
             registration.UserName = row["UserName"].ToString();
             registration.Email = row["Email"].ToString();
             registration.Password = row["Password"].ToString();
             registration.ResetPasswordCode = row["ResetPasswordCode"].ToString();
-            registration.DOB = Convert.ToDateTime(string.IsNullOrEmpty(row["DOB"].ToString())? DateTime.Now.ToString(): row["DOB"].ToString());
+            registration.DOB = Convert.ToDateTime(string.IsNullOrEmpty(row["DOB"].ToString()) ? "01-01-1111" : row["DOB"].ToString());
+            //registration.DOB = Convert.ToDateTime(string.IsNullOrEmpty(row["DOB"].ToString())? DateTime.Now.ToString(): row["DOB"].ToString());
             registration.Phone = ((row["Phone"]) ?? "").ToString();
-            //};
-
+            
             return registration;
         }
     }

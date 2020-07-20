@@ -40,6 +40,17 @@
 
     $('#btnLogin').click(function () {
         userType = 'normal';
+
+        if ($('#inputEmail').val() == "") {
+            alert("Email Id is required");
+            return;
+        }
+
+        if ($('#inputPassword').val() == "") {
+            alert("Password is required");
+            return;
+        }
+
         currentUserEmail = $('#inputEmail').val();
         var data = {
             Email: $('#inputEmail').val(),
@@ -65,6 +76,8 @@
                     showList();
                     $('#currentUser').text(data.username);
                     $('#ModalSignInSignUp').modal('hide');
+                } else {
+                    toastr.warning("Invalid email or password", "Failed");
                 }
             },
             error: function () {
@@ -260,23 +273,28 @@
         var date2 = $('#EndDate').val();        
 
         if ($('#EventName').val().trim() == "") {
-            alert('EventName is required');
+            alert('Subject is required');
             return;
         }
         if ($('#StartDate').val().trim() == "") {
-            alert('Start date required');
+            alert('Start date is required');
+            return;
+        }
+
+        if ($('#EndDate').val().trim() == "") {
+            alert('End date is required');
             return;
         }
 
         if (new Date(date1).getDate() == new Date(date2).getDate()) {
           if (new Date(date1).getTime() == new Date(date2).getTime()) {
-              alert('Invalid end date');
+              alert('Start date should not be greater than or equal to end date');
               return;
           }
         }
                     
         if (new Date(date1) > new Date(date2)){
-                alert('Start date should not be greater than end date');
+            alert('Start date should not be greater than or equal to end date');
                 return;
         }
                    
@@ -378,8 +396,8 @@
         if (selectedEvent != null) {
             $('#hdEventID').val(selectedEvent.eventID);
             $('#txtSubject').val(selectedEvent.title);
-            $('#txtStart').val(selectedEvent.start.format('DD-MM-YYYY HH:mm a'));
-            $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD-MM-YYYY HH:mm a') : '');
+            $('#txtStart').val(selectedEvent.start.format('DD-MM-YYYY HH:mm'));
+            $('#txtEnd').val(selectedEvent.end != null ? selectedEvent.end.format('DD-MM-YYYY HH:mm') : '');
             $('#txtDescription').val(selectedEvent.description);
         }
         $('#myModal').modal('hide');
@@ -390,47 +408,38 @@
 
     $('#btnSave').click(function () {
         //Validation/
-
         var date1 = $('#txtStart').val();
-        var date2 = $('#txtEnd').val();  
+        var date2 = $('#txtEnd').val();
 
-        var d1 = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").isValid();
-        var d2 = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").isValid();
-        if (d1 == false || d2 == false) {
-            alert("Incorrect start or end date");
-            return;
-        }
-
+        //Validation/
         if ($('#txtSubject').val().trim() == "") {
             alert('Subject required');
             return;
         }
         if ($('#txtStart').val().trim() == "") {
-            alert('Start date required');
+            alert('Start date is required');
             return;
         }
 
-        if (new Date(date1).getDate() == new Date(date2).getDate()) {
-            if (new Date(date1).getTime() == new Date(date2).getTime()) {
-                alert('Invalid end date');
-                return;
-            }
-        }
-
-        if (new Date(date1) > new Date(date2)) {
-            alert('Start date should not be greater than end date');
+        if ($('#txtEnd').val().trim() == "") {
+            alert('End date is required');
             return;
         }
-        
-        //else {
-        //    var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
-        //    var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
-        //    if (startDate > endDate) {
-        //        alert('Start date should not be greater than end date');
-        //        return;
-        //    }
-        //}
 
+        var d1 = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm",true);
+        var d2 = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm", true);        
+        if (d1.isValid() == false || d2.isValid() == false) {
+            alert("Invalid start or end date");
+            return;
+        }
+                        
+        var startDate = moment($('#txtStart').val(), "DD-MM-YYYY HH:mm a").toDate();
+        var endDate = moment($('#txtEnd').val(), "DD-MM-YYYY HH:mm a").toDate();
+        if (startDate >= endDate) {
+            alert('Start date should not be greater than or equal to end date');
+            return;
+        }
+              
         var selectedDate = new Date(date1);
         var now = new Date();
         if (selectedDate < now) {
@@ -438,7 +447,7 @@
                 return;
             }
         }
-
+        
         var data = {
             EventId: $('#hdEventID').val(),
             EventName: $('#txtSubject').val().trim(),
@@ -548,40 +557,35 @@
 
         var date1 = $('#StartDateList').val();
         var date2 = $('#EndDateList').val();  
-                
-        var d1 = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm a").isValid();
-        var d2 = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm a").isValid();
-        if (d1 == false || d2 == false) {
-            alert("Invalid start or end date");
-            return;
-        }
-        
+                                
         //Validation/
         if ($('#EventNameList').val().trim() == "") {
             alert('Subject required');
             return;
         }
         if ($('#StartDateList').val().trim() == "") {
-            alert('Start date required');
+            alert('Start date is required');
+            return;
+        }
+        if ($('#EndDateList').val().trim() == "") {
+            alert('End date is required');
             return;
         }
 
-        if (new Date(date1).getDate() == new Date(date2).getDate()) {
-            if (new Date(date1).getTime() == new Date(date2).getTime()) {
-                alert('Invalid end date');
-                return;
-            }
+        var d1 = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm", true);
+        var d2 = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm", true);
+        if (d1.isValid() == false || d2.isValid() == false) {
+            alert("Invalid start or end date");
+            return;
         }
-
-        else {
-            var startDate = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
-            var endDate = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
-            if (startDate > endDate) {
-                alert('Start date should not be greater than end date');
-                return;
-            }
+             
+         var startDate = moment($('#StartDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
+         var endDate = moment($('#EndDateList').val(), "DD-MM-YYYY HH:mm a").toDate();
+         if (startDate >= endDate) {
+             alert('Start date should not be greater than or equal to end date');
+             return;
         }
-
+                        
         var selectedDate = new Date(date1);
         var now = new Date();
         if (selectedDate < now) {
@@ -589,7 +593,7 @@
                 return;
             }
         }
-
+        
         var data = {
             EventId: $('#EventIdList').val(),
             EventName: $('#EventNameList').val().trim(),
@@ -606,11 +610,13 @@
             type: "POST",
             url: "/User/Edit",
             data: { 'id': eveId },
-            success: function (eventModel) {               
+            success: function (eventModel) {
+                    var startDate = moment(eventModel.StartDate).format('DD-MM-YYYY HH:mm');
+                    var endDate = moment(eventModel.EndDate).format('DD-MM-YYYY HH:mm');
                     $('#EventIdList').val(eventModel.EventId);
                     $('#EventNameList').val(eventModel.EventName);
-                    $('#StartDateList').val(eventModel.StartDateStr);
-                    $('#EndDateList').val(eventModel.EndDate != null ? eventModel.EndDateStr : '');
+                    $('#StartDateList').val(startDate);
+                    $('#EndDateList').val(eventModel.EndDate != null ? endDate : '');
                     $('#DescriptionList').val(eventModel.Description);                
 
                     $('#ModalListUpdate').modal();
@@ -858,15 +864,20 @@
         {
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             if (!$('#uEmail').val().match(mailformat))
-            {
+            {b
             alert("You have entered an invalid email address!");
             return;            
             }
         }
 
-        var no = $('#uPhone').val();
+        var dob = moment($('#uDOB').val(), "DD-MM-YYYY", true);
+        if (dob.isValid() == false) {
+            alert("Invalid date of birth");
+            return;
+        }
 
-        if (no != null) {
+        var no = $('#uPhone').val();
+        if (no.length != 0) {
             var numbers = /^[0-9]+$/;
             if (no.match(numbers)) {
                 if (no.length > 10 || no.length < 10) {
