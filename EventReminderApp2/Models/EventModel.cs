@@ -19,5 +19,6 @@ namespace EventReminderApp2.Models
         public string StartDateString { get { return StartDate.ToString("yyyy-MM-dd HH:mm"); } }       
 
         public string Email { get; set; }
+        public string MailSend { get; set; }
     }
 }

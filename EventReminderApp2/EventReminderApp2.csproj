@@ -208,8 +208,15 @@
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
     <Content Include="CSS\calenderIMG.jpg" />
+    <Content Include="CSS\deleteIcon.svg">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="CSS\editIcon.svg" />
     <Content Include="CSS\Home.css" />
+    <Content Include="CSS\IconCalendarClock.svg" />
     <Content Include="CSS\LoginReg.css" />
+    <Content Include="CSS\logout.svg" />
+    <Content Include="CSS\logoutWhite.svg" />
     <Content Include="CSS\NavTabss.css" />
     <Content Include="CSS\ResetPassword.css" />
     <Content Include="favicon.ico" />

@@ -14,7 +14,9 @@
 
     var save;
     var fbUser;
-    var userType;   
+    var userType;
+    var isRegFormValid = false;
+    var isLoginFormValid = false;
     
     $('#backgroundImg').css('display', 'block');
     $('#tab').css('display', 'none');
@@ -38,25 +40,68 @@
         $('#ModalSignInSignUp').modal();
     })
 
+    //inline validation for login
+    $(".form-signin input").focus(function () {
+        if ($(this).next($('span')).hasClass('error-show')) {
+            $(this).next($('span')).removeClass("error-show").addClass("not-error");
+        }
+    });
+
+    $(".form-signin input").blur(function () {
+        validateLoginField(this);
+    });
+
+    function validateLoginField(field) {
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if ($(field).attr("id") == 'inputEmail') {
+            if ($('#inputEmail').val() == "") {
+                $('#errorLoginEmail').text("Email Id is required");
+                $('#errorLoginEmail').removeClass("not-error").addClass("error-show");
+            }
+            else if (!$('#inputEmail').val().match(mailformat)) {
+                $('#errorLoginEmail').text("You have entered an invalid email address!");
+                $('#errorLoginEmail').removeClass("not-error").addClass("error-show");
+            }
+        }
+        if ($(field).attr("id") == 'inputPassword') {
+            if ($('#inputPassword').val() == "") {
+                $('#errorLoginPassword').text("Password is required");
+                $('#errorLoginPassword').removeClass("not-error").addClass("error-show");
+            }
+        }
+    }
+
+    function checkAllLoginFieldsValid() {
+        if ($('#inputEmail').val() == "") {
+            $('#errorLoginEmail').text("Email Id is required");
+            $('#errorLoginEmail').removeClass("not-error").addClass("error-show");
+        }
+        if ($('#inputPassword').val() == "") {
+            $('#errorLoginPassword').text("Password is required");
+            $('#errorLoginPassword').removeClass("not-error").addClass("error-show");
+        }
+    }
+
     $('#btnLogin').click(function () {
         userType = 'normal';
 
-        if ($('#inputEmail').val() == "") {
-            alert("Email Id is required");
-            return;
+        checkAllLoginFieldsValid();
+
+        var i;
+        for (i = 0; i < 5; i++) {
+            if (!$(".form-signin span").hasClass('error-show')) {
+                isLoginFormValid = true;
+            }
         }
 
-        if ($('#inputPassword').val() == "") {
-            alert("Password is required");
-            return;
-        }
-
-        currentUserEmail = $('#inputEmail').val();
-        var data = {
-            Email: $('#inputEmail').val(),
-            Password: $('#inputPassword').val()
-        }
-        Login(data);
+        if (isLoginFormValid) {
+            currentUserEmail = $('#inputEmail').val();
+            var data = {
+                Email: $('#inputEmail').val(),
+                Password: $('#inputPassword').val()
+            }
+            Login(data);
+        }        
     });
 
     function Login(loginData) {
@@ -85,68 +130,133 @@
             }
         })
     }
+    
+    function checkAllRegFieldsValid() {
+       
+            if ($('#user-name').val() == "") {
+                $('#errorUserName').text("User name is required");
+                $('#errorUserName').removeClass("not-error").addClass("error-show");
+            }        
+                                          
+            if ($('#user-email').val() == "") {
+                $('#errorEmail').text("Email Id is required");
+                $('#errorEmail').removeClass("not-error").addClass("error-show");
+            }
+                            
+            if ($('#user-pass').val() == "") {
+                $('#errorPassword').text("Password is required");
+                $('#errorPassword').removeClass("not-error").addClass("error-show");
+            }
+            else if ($('#user-repeatpass').val() == "") {
+                $('#errorRePassword').text("Confirm password is required");
+                $('#errorRePassword').removeClass("not-error").addClass("error-show");
+            }
+                                 
+    }
 
-
-    function registerValidation() {
-
-        var isValid = true;
-
-        if ($('#user-name').val() == "") {
-            alert("User name is required");
-            isValid = false;
+    //inline validation for registration
+    $(".form-signup input").blur(function () {
+        validateField(this);        
+    });
+   
+    function validateField(field) {
+      
+        if ($(field).attr("id") == 'user-name') {
+            if ($('#user-name').val() == "") {
+                $('#errorUserName').text("User name is required");
+                $('#errorUserName').removeClass("not-error").addClass("error-show");
+            }           
         }
 
-        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (!$('#user-email').val().match(mailformat)) {
-            alert("You have entered an invalid email address!");
-            document.getElementById("user-email").focus();
-            isValid = false;
-        }
-
-        var no = $('#user-phone').val();
-
-        if (!no == "") {
-            var numbers = /^[0-9]+$/;
-            if (no.match(numbers)) {
-                if (no.length > 10 || no.length < 10) {
-                    alert('Invalid phone number');
-                    document.getElementById("user-phone").focus();
-                    isValid = false;
+        if ($(field).attr("id") == 'user-phone') {
+            var no = $('#user-phone').val();
+            if (!no == "") {
+                var numbers = /^[0-9]+$/;
+                if (no.match(numbers)) {
+                    if (no.length > 10 || no.length < 10) {
+                        $('#errorPhone').text("Invalid phone number");
+                        $('#errorPhone').removeClass("not-error").addClass("error-show");
+                    }
+                }
+                else {
+                    $('#errorPhone').text("Invalid phone number");
+                    $('#errorPhone').removeClass("not-error").addClass("error-show");
                 }
             }
-            else {
-                alert('Invalid phone number');
-                document.getElementById("user-phone").focus();
-                isValid = false;
+        }
+
+        if ($(field).attr("id") == 'user-email') {
+            var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if ($('#user-email').val() == "") {
+                $('#errorEmail').text("Email Id is required");
+                $('#errorEmail').removeClass("not-error").addClass("error-show");
+            }
+            else if (!$('#user-email').val().match(mailformat)) {
+                $('#errorEmail').text("You have entered an invalid email address!");
+                $('#errorEmail').removeClass("not-error").addClass("error-show");
+            }
+            else if ($('#user-email').val().match(mailformat)) {
+                $.ajax({
+                    type: "POST",
+                    url: '/User/EmailValidation',
+                    data: {email:$('#user-email').val() },
+                    success: function (data) {
+                        if (data.status) {
+                            $('#errorEmail').text("Already registered email address!");
+                            $('#errorEmail').removeClass("not-error").addClass("error-show");
+                        } 
+                    },
+                    error: function () {
+                        alert('Failed');
+                    }
+                });
             }
         }
 
-        if ($('#user-pass').val() == "") {
-            alert("Password is required");
-            isValid = false;
+        if ($(field).attr("id") == 'user-pass') {
+            if ($('#user-pass').val() == "") {
+                $('#errorPassword').text("Password is required");
+                $('#errorPassword').removeClass("not-error").addClass("error-show");
+            }
+            else if ($('#user-repeatpass').val() == "")
+            {
+                $('#errorRePassword').text("Confirm password is required");
+                $('#errorRePassword').removeClass("not-error").addClass("error-show");
+            }
         }
-        if ($('#user-repeatpass').val() == "") {
-            alert("Confirm password is required");
-            isValid = false;
-        }
-        //if (!$('#user-pass').val().match($('#user-repeatpass').val()) && !$('#user-pass').val().match($('#user-repeatpass').val())) {
-        //    alert("Password does not match");
-        //    document.getElementById("user-repeatpass").focus();
-        //    isValid = false;
-        //}
-
-        if ($('#user-pass').val()!=$('#user-repeatpass').val()) {
-            alert("Password does not match");
-            document.getElementById("user-repeatpass").focus();
-            isValid = false;
-        }
-       
-        return isValid;
+        
+        if ($(field).attr("id") == 'user-repeatpass') {
+            if ($('#user-repeatpass').val() == "") {
+                $('#errorRePassword').text("Confirm Password is required");
+                $('#errorRePassword').removeClass("not-error").addClass("error-show");
+            }
+            else if ($('#user-pass').val() != $('#user-repeatpass').val())
+            {
+                $('#errorRePassword').text("Password does not match");
+                $('#errorRePassword').removeClass("not-error").addClass("error-show");
+            }
+        }                       
     }
+
+    $(".form-signup input").focus(function () {
+        if ($(this).next($('span')).hasClass('error-show')) {
+            $(this).next($('span')).removeClass("error-show").addClass("not-error");
+        }        
+    });
+
     ///register///
     $('#btn-SignUp').click(function () {       
 
-        if (registerValidation()) { 
+        checkAllRegFieldsValid();
+
+        var i;
+        for (i = 0; i < 5; i++) {
+            if (!$(".form-signup span").hasClass('error-show')) {
+                isRegFormValid = true;
+            }            
+        }
+        
+        if (isRegFormValid) { 
             var RegData = {
                 UserName: $('#user-name').val(),
                 Email: $('#user-email').val(),
@@ -154,14 +264,14 @@
                 DOB: $('#user-dob').val(),
                 Phone: $('#user-phone').val()
             }
-        //clearing form values
-        $('#user-name').val("");
-        $('#user-email').val("");
-        $('#user-pass').val("");
-        $('#user-repeatpass').val("");
-        $('#user-dob').val("");
-        $('#user-phone').val("");
-            Register(RegData);
+            //clearing form values
+            $('#user-name').val("");
+            $('#user-email').val("");
+            $('#user-pass').val("");
+            $('#user-repeatpass').val("");
+            $('#user-dob').val("");
+            $('#user-phone').val("");
+                Register(RegData);
         }         
     });
 
@@ -173,7 +283,21 @@
             success: function (data) {
                 if (data.status) {
                     toastr.success("You are registered sucessfully...", "Sucess");
-                    $('#ModalSignInSignUp').modal();
+                   // $('#ModalSignInSignUp').modal();
+                    if (data.status) {
+                        $('#backgroundImg').css('display', 'none');
+                        $('#tab').css('display', 'block');
+                        $(btnSignInSignUp).css('display', 'none');
+                        $(btnSignOut).css('display', 'inline-block');
+                        $('#welcome').css('display', 'inline-block');
+                        //Refresh the calender
+                        FetchEventAndRenderCalendar();
+                        showList();
+                        $('#currentUser').text(data.username);
+                        $('#ModalSignInSignUp').modal('hide');
+                    }
+                }else if (data.isRegistered) {
+                    toastr.error("This Email Id is already registered", "Failed");
                 }
             },
             error: function () {
@@ -258,7 +382,14 @@
                     StartDate: event.start.format('DD-MM-YYYY HH:mm a'),
                     EndDate: event.end != null ? event.end.format('DD-MM-YYYY HH:mm a') : null,
                     Description: event.description
-                };
+                };               
+                var selectedDate = new Date(event.start);
+                var now = new Date();
+                if (selectedDate < now) {
+                    if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
+                        return;
+                    }
+                }
                 SaveEvent(data);
             }
 
@@ -297,14 +428,8 @@
             alert('Start date should not be greater than or equal to end date');
                 return;
         }
-                   
-            var selectedDate = new Date(date1);
-            var now = new Date();
-            if (selectedDate < now) {
-                if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
-                    return;
-                }
-            }
+
+           
                      
         var data = {
             EventId: $('#EventID').val(),
@@ -312,7 +437,17 @@
             Description: $('#Description').val(),
             StartDate: $('#StartDate').val(),
             EndDate: $('#EndDate').val()                       
-        }       
+        }   
+
+        var startDate = moment($('#StartDate').val(), "DD-MM-YYYY HH:mm a").toDate();
+        var selectedDate = new Date(date1);
+        var now = new Date();
+        if (selectedDate < now) {
+            if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
+                return;
+            }
+        }
+
         //clearing form values
         $('#EventID').val("");
         $('#EventName').val("");
@@ -439,10 +574,12 @@
             alert('Start date should not be greater than or equal to end date');
             return;
         }
-              
-        var selectedDate = new Date(date1);
+
+        
+        //var selectedDate = new Date(date1);
         var now = new Date();
-        if (selectedDate < now) {
+
+        if (startDate < now) {
             if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
                 return;
             }
@@ -455,6 +592,7 @@
             StartDate: $('#txtStart').val(),
             EndDate: $('#txtEnd').val()
         }
+       
         SaveEvent(data);
     });
   
@@ -467,14 +605,16 @@
             success: function (data) {
                 $.each(data, function (i, item) {
                        var rows = "<tr id=" + item.EventId +">"
-                           + "<td>" + ++i + "</td>"
+                        + "<td>" + ++i + "</td>"
                         + "<td>" + item.EventId + "</td>"
                         + "<td>" + item.EventName + "</td>"
                         + "<td>" + item.Description + "</td>"
                         + "<td>" + item.StartDateStr + "</td>"
                         + "<td>" + item.EndDateStr + "</td>"
-                        + "<td>" + "<button class='EditRow'" + ">Edit</button>" + "</td>"
-                        + "<td>" + "<button class='deleteRow'" + ">Delete</button>" + "</td>"
+                        // + "<td>" + "<button class='EditRow'" + ">Edit</button>" + "</td>"
+                        // + "<td>" + "<button class='deleteRow'" + ">Delete</button>" + "</td>" 
+                        + "<td><div class='EditRow'></div></td>"
+                        + "<td><div class='deleteRow'></div></td>"                          
                         + "</tr>";
                     $('#tblEventList tbody').append(rows);
                 }); 
@@ -586,9 +726,9 @@
              return;
         }
                         
-        var selectedDate = new Date(date1);
+        //var selectedDate = new Date(date1);
         var now = new Date();
-        if (selectedDate < now) {
+        if (startDate < now) {
             if (!confirm("Selected date is in the past. Do you still want to create this event?")) {
                 return;
             }
@@ -925,6 +1065,39 @@
     $('#btnCreateEvent').click(function () {
         $('#createEventModal').modal();       
     });
+
+    //fb notification
+    //$('#sendFbNotification').click(function () {
+    //    makePost();
+    //});
+
+    //function makePost() {
+    //    var appId = "d3855d461bd773b087b7527e3103ea9e";
+    //    var appSecret = "254421055834292";
+    //    var personid = "270945354152211";
+    //    var address = "https://graph.facebook.com/" + personid + "/notifications";
+    //    var tempdata = {};
+    //    tempdata['access_token'] = appId + "|" + appSecret;
+    //    tempdata['href'] = "";
+    //    tempdata['template'] = "You have earned 5 credits, Click here to redeem";
+    //    //jQuery.post(address, tempdata, function (data) {
+    //    //    console.log(data);
+    //    //});
+    //    $.ajax({
+    //        type: "POST",
+    //        url: 'https://graph.facebook.com/' + personid + '/notifications',
+    //        data: tempdata,
+    //        success: function (data) {
+    //            console.log(data);
+    //            if (data.status) {
+    //                toastr.success("Notification sended", "Notification");                   
+    //            }
+    //        },
+    //        error: function () {
+    //            //alert('Failed');
+    //        }
+    //    })
+    //}
        
 })//document.ready       
 

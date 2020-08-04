@@ -44,21 +44,67 @@ namespace EventReminderApp2.Controllers
             return View();                       
         }
 
+        [HttpPost]
+        public ActionResult EmailValidation(string email)
+        {
+            var status = false;
+            string queryCheck = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{email}'";
+            List<string> isRegisterd = eventRepository.GetUserLoginDetails(queryCheck);
+            if (isRegisterd.Count != 0)
+            {
+                status = true;
+                return new JsonResult { Data = new { status = status } };
+            }
+            else
+            {
+                status = false;
+                return new JsonResult { Data = new { status = status } };
+            }
+        }
 
         [HttpPost]
         public ActionResult SignUp(Registration registration)
         {
+            string uId;
+            string uEmail;
+            string uname="";
             var status = false;
+
+            string queryCheck = $"Select UserId,Email,UserName from [dbo].[tblRegistration] where Email='{registration.Email}'";
+            List<string> isRegisterd = eventRepository.GetUserLoginDetails(queryCheck);
+            if (isRegisterd.Count != 0)
+            {
+                var isRegistered = true;
+                return new JsonResult { Data = new { isRegistered = isRegistered } };
+            }
+
             var dob = registration.DOB.ToString("yyyy-MM-dd");                        
             string query = "insert into tblRegistration(UserName,Email,Password,DOB,Phone)" +
                     " values('" + registration.UserName + "','" + registration.Email + "','" + registration.Password + "','" + dob + "','" + registration.Phone + "')";
             int count = eventRepository.AddUpdateDeleteSQL(query);
             
-            if(count == 1)
-            {                
-                status = true;
+            if (count == 1)
+            {                                                                        
+                string query2 = $"Select UserId,Email,Password,UserName from [dbo].[tblRegistration] where Email='{registration.Email}' and Password='{registration.Password}'";
+                List<string> sessionVariables = eventRepository.GetUserLoginDetails(query2);
+
+                if (sessionVariables.Count != 0)
+                {
+                    uId = sessionVariables[0];
+                    uEmail = sessionVariables[1];
+                    uname = sessionVariables[2];
+
+                    Session["userid"] = uId;
+                    Session["email"] = uEmail;
+                    Session["username"] = uname;
+                    status = true;                    
+                }
+                return new JsonResult { Data = new { status = status, username = uname } };
             }
-            return new JsonResult { Data = new { status = status } };
+            else
+            {
+                return new JsonResult { Data = new { status = status } };
+            }
         }
 
 
@@ -246,17 +292,22 @@ namespace EventReminderApp2.Controllers
             
             var currentDate = DateTime.Now;            
             var eventDate= currentDate.AddMinutes(+5).ToString("yyyy-MM-dd HH:mm");             
-            string qry = $"Select Email,StartDate,EventName,Description from tblRegistration join tblEvents on (tblRegistration.UserId=tblEvents.UserId) where StartDate='{eventDate}' ";
+            string qry = $"Select Email,StartDate,EventName,Description,EventId,MailSend from tblRegistration join tblEvents on (tblRegistration.UserId=tblEvents.UserId) where StartDate='{eventDate}' ";
             List<EventModel> mailDetails= eventRepository.GetMailDetails(qry);
             foreach (EventModel item in mailDetails)
             {
+                if(item.MailSend != "true")
+                { 
                 string ebody = "<p>Hi,<br />This is a reminder of the following event-<br />Event:"+item.EventName+ "<br />"+"Description:" + item.Description + "<br />" +"Time:" + item.StartDate + "</ p > ";
-                status = SendEmail(item.Email, "EventReminder", ebody);
+                string query = $"update tblEvents set MailSend='true' where EventId={item.EventId}";
+                int count = eventRepository.AddUpdateDeleteSQL(query);
+                status = SendEmail(item.Email, "EventReminder", ebody,item.EventId);
+                }
             }              
 
         }
 
-        public bool SendEmail(string toEmail, string subject, string emailBody)
+        public bool SendEmail(string toEmail, string subject, string emailBody, int eventid)
         {
             try
             {
@@ -265,7 +316,7 @@ namespace EventReminderApp2.Controllers
 
                 SmtpClient client = new SmtpClient("smtp.gmail.com",587);
                 client.EnableSsl = true;
-                client.Timeout = 100000;
+                //client.Timeout = 100000;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(senderEmail, senderPassword);
@@ -273,6 +324,9 @@ namespace EventReminderApp2.Controllers
                 mailMessage.IsBodyHtml = true;
                 mailMessage.BodyEncoding = UTF8Encoding.UTF8;
                 client.Send(mailMessage);
+
+                //string query= $"update tblEvents set MailSend='true' where EventId={eventid}";
+                //int count = eventRepository.AddUpdateDeleteSQL(query);
 
                 return true;
             }

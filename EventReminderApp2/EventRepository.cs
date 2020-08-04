@@ -23,7 +23,7 @@ namespace EventReminderApp2
                 var endDate = eventModel.EndDate.ToString("yyyy-MM-dd HH:mm");
 
                 qry = "update tblEvents set UserId = '" + userid +
-                    "', EventName= '" + eventModel.EventName + "',Description= '" + eventModel.Description + "', StartDate='" + startDate + "', EndDate='" + endDate + "' where EventId=" + eventModel.EventId;
+                    "', EventName= '" + eventModel.EventName + "',Description= '" + eventModel.Description + "', StartDate='" + startDate + "', EndDate='" + endDate + "', MailSend='" + " " + "' where EventId=" + eventModel.EventId;
             }
             else
             {
@@ -140,7 +140,9 @@ namespace EventReminderApp2
                     eventModel.Email= row["Email"].ToString();
                     eventModel.StartDate= Convert.ToDateTime(row["StartDate"]);
                     eventModel.EventName= row["EventName"].ToString();
-                    eventModel.Description= row["Description"].ToString();
+                    eventModel.Description= row["Description"].ToString(); 
+                    eventModel.EventId = Convert.ToInt32(row["EventId"]);
+                    eventModel.MailSend = row["MailSend"].ToString();
                     mailDetails.Add(eventModel);
                 }
             }                
